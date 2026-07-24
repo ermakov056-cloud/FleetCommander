@@ -80,12 +80,79 @@ function drawBoard(board, matrix, editable, enemy = false) {
 
 }
 
-function autoPlaceShips(matrix) {
-    for (let y = 0; y < SIZE; y++) {
-        for (let x = 0; x < SIZE; x++) {
+function autoPlace(matrix) {
+
+    for (let y = 0; y < SIZE; y++)
+        for (let x = 0; x < SIZE; x++)
             matrix[y][x] = 0;
+
+    function canPlace(x, y, len, horizontal) {
+
+        for (let i = 0; i < len; i++) {
+
+            let xx = horizontal ? x + i : x;
+            let yy = horizontal ? y : y + i;
+
+            if (xx >= SIZE || yy >= SIZE)
+                return false;
+
+            for (let dy = -1; dy <= 1; dy++) {
+
+                for (let dx = -1; dx <= 1; dx++) {
+
+                    let nx = xx + dx;
+                    let ny = yy + dy;
+
+                    if (
+                        nx >= 0 &&
+                        ny >= 0 &&
+                        nx < SIZE &&
+                        ny < SIZE &&
+                        matrix[ny][nx] == 1
+                    )
+                        return false;
+
+                }
+
+            }
+
         }
+
+        return true;
+
     }
+
+    function placeShip(len) {
+
+        while (true) {
+
+            let horizontal = Math.random() < 0.5;
+
+            let x = Math.floor(Math.random() * SIZE);
+
+            let y = Math.floor(Math.random() * SIZE);
+
+            if (!canPlace(x, y, len, horizontal))
+                continue;
+
+            for (let i = 0; i < len; i++) {
+
+                if (horizontal)
+                    matrix[y][x + i] = 1;
+                else
+                    matrix[y + i][x] = 1;
+
+            }
+
+            return;
+
+        }
+
+    }
+
+    SHIPS.forEach(placeShip);
+
+}
 
     let placed = 0;
 
