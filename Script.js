@@ -194,7 +194,16 @@ document.getElementById("startGame").onclick = function () {
 
     gameStarted = true;
 
-    statusText.innerHTML = "Ваш ход! Стреляйте по полю противника.";
+    statusText.innerHTML = "Ваш ход! Стреляйте по полю противника.
+        ";
+       document.getElementById("startGame").onclick = function () {
+
+    gameStarted = true;
+
+    statusText.innerHTML =
+        "🚀 Бой начался! Стреляйте по полю противника.";
+
+}; 
 
 }
 
