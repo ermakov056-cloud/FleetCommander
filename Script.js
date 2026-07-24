@@ -1,51 +1,37 @@
-// Fleet Commander 2.0
-
 const SIZE = 10;
 
 const playerBoard = document.getElementById("playerBoard");
 const enemyBoard = document.getElementById("enemyBoard");
-
 const status = document.getElementById("status");
 
-const player = [];
-const enemy = [];
+let player = [];
+let enemy = [];
 
 function createMatrix() {
-
-    return Array.from({ length: SIZE }, () =>
-        Array(SIZE).fill(0)
-    );
-
+    return Array.from({ length: SIZE }, () => Array(SIZE).fill(0));
 }
 
-function createBoard(element, matrix, enemyField = false) {
-
-    element.innerHTML = "";
+function createBoard(boardElement, matrix, editable) {
+    boardElement.innerHTML = "";
 
     for (let y = 0; y < SIZE; y++) {
 
         for (let x = 0; x < SIZE; x++) {
 
             const cell = document.createElement("div");
-
             cell.className = "cell";
 
-            cell.dataset.x = x;
-            cell.dataset.y = y;
-
-            if (!enemyField) {
-
-                cell.addEventListener("click", () => {
-
-                    cell.classList.toggle("ship");
+            if (editable) {
+                cell.onclick = () => {
 
                     matrix[y][x] = matrix[y][x] ? 0 : 1;
 
-                });
+                    cell.classList.toggle("ship");
 
+                };
             }
 
-            element.appendChild(cell);
+            boardElement.appendChild(cell);
 
         }
 
@@ -53,45 +39,28 @@ function createBoard(element, matrix, enemyField = false) {
 
 }
 
-function newGame() {
-
-    player.length = 0;
-    enemy.length = 0;
-
-    player.push(...createMatrix());
-    enemy.push(...createMatrix());
-
-    createBoard(playerBoard, player, false);
-    createBoard(enemyBoard, enemy, true);
-
-    status.textContent = "Подготовьте свой флот.";
-
-}
-
-function randomShips(matrix, boardElement, visible = true) {
+function randomShips(matrix, boardElement, visible) {
 
     matrix.forEach(row => row.fill(0));
 
-    boardElement.querySelectorAll(".cell").forEach(c => {
-        c.className = "cell";
+    boardElement.querySelectorAll(".cell").forEach(cell=>{
+        cell.className="cell";
     });
 
-    let ships = 20;
+    let ships=20;
 
-    while (ships > 0) {
+    while(ships>0){
 
-        const x = Math.floor(Math.random() * SIZE);
-        const y = Math.floor(Math.random() * SIZE);
+        let x=Math.floor(Math.random()*10);
+        let y=Math.floor(Math.random()*10);
 
-        if (matrix[y][x] === 0) {
+        if(matrix[y][x]==0){
 
-            matrix[y][x] = 1;
+            matrix[y][x]=1;
 
-            if (visible) {
+            if(visible){
 
-                const index = y * SIZE + x;
-
-                boardElement.children[index].classList.add("ship");
+                boardElement.children[y*10+x].classList.add("ship");
 
             }
 
@@ -103,20 +72,27 @@ function randomShips(matrix, boardElement, visible = true) {
 
 }
 
-document
-.getElementById("newGame")
-.addEventListener("click", newGame);
+function newGame(){
 
-document
-.getElementById("autoPlace")
-.addEventListener("click", () => {
+    player=createMatrix();
+    enemy=createMatrix();
 
-    randomShips(player, playerBoard, true);
+    createBoard(playerBoard,player,true);
+    createBoard(enemyBoard,enemy,false);
 
-    randomShips(enemy, enemyBoard, false);
+    status.textContent="Подготовьте свой флот";
 
-    status.textContent = "Флот готов. Скоро начнётся бой.";
+}
 
-});
+document.getElementById("newGame").onclick=newGame;
+
+document.getElementById("autoPlace").onclick=()=>{
+
+    randomShips(player,playerBoard,true);
+    randomShips(enemy,enemyBoard,false);
+
+    status.textContent="Флот готов к бою!";
+
+};
 
 newGame();
