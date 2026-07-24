@@ -1,196 +1,62 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fleet Commander</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleet Commander 2.0</title>
 
-<style>
-body{
-margin:0;
-font-family:Arial,sans-serif;
-background:linear-gradient(#022,#046);
-color:white;
-text-align:center;
-}
-
-header{
-padding:20px;
-font-size:32px;
-font-weight:bold;
-background:#012;
-box-shadow:0 0 15px black;
-}
-
-button{
-padding:15px 30px;
-font-size:20px;
-margin:15px;
-border:none;
-border-radius:12px;
-background:#0a84ff;
-color:white;
-}
-
-#game{
-display:none;
-padding:20px;
-}
-
-.board{
-display:grid;
-grid-template-columns:repeat(10,32px);
-gap:3px;
-justify-content:center;
-margin-top:20px;
-}
-
-.cell{
-width:32px;
-height:32px;
-background:#2b7bbb;
-border-radius:4px;
-}
-
-.cell:hover{
-background:#58a9e8;
-cursor:pointer;
-}
-
-.hit{
-background:red;
-}
-
-.miss{
-background:#444;
-}
-</style>
-
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<div class="background"></div>
+
 <header>
 
-⚓ Fleet Commander
+<h1>⚓ Fleet Commander</h1>
+
+<p>Морской бой нового поколения</p>
 
 </header>
 
-<div id="menu">
+<div class="controls">
 
-<h2>Добро пожаловать, Адмирал!</h2>
-
-<button onclick="startGame()">
-
+<button id="newGame">
 Новая игра
+</button>
 
+<button id="autoPlace">
+Авторасстановка
 </button>
 
 </div>
 
-<div id="game">
+<main>
 
-<h2>Морской бой</h2>
+<div class="boardBox">
 
-<p id="status">
+<h2>Ваш флот</h2>
 
-Уничтожьте весь флот противника
-
-</p>
-
-<div id="board" class="board"></div>
+<div id="playerBoard" class="board"></div>
 
 </div>
 
-<script>
+<div class="boardBox">
 
-let board=[];
+<h2>Противник</h2>
 
-let ships=10;
+<div id="enemyBoard" class="board"></div>
 
-function startGame(){
+</div>
 
-document.getElementById("menu").style.display="none";
+</main>
 
-document.getElementById("game").style.display="block";
+<div id="status">
+Добро пожаловать, Командир.
+</div>
 
-createBoard();
-
-}
-
-function createBoard(){
-
-let area=document.getElementById("board");
-
-area.innerHTML="";
-
-board=[];
-
-ships=10;
-
-for(let i=0;i<100;i++){
-
-board.push({
-
-ship:Math.random()<0.1,
-
-shot:false
-
-});
-
-let cell=document.createElement("div");
-
-cell.className="cell";
-
-cell.onclick=function(){
-
-fire(i,cell);
-
-};
-
-area.appendChild(cell);
-
-}
-
-}
-
-function fire(i,cell){
-
-if(board[i].shot)return;
-
-board[i].shot=true;
-
-if(board[i].ship){
-
-cell.className="cell hit";
-
-ships--;
-
-document.getElementById("status").innerHTML=
-
-"Попадание! Осталось кораблей: "+ships;
-
-if(ships==0){
-
-setTimeout(function(){
-
-alert("🏆 Победа!");
-
-location.reload();
-
-},300);
-
-}
-
-}else{
-
-cell.className="cell miss";
-
-}
-
-}
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
