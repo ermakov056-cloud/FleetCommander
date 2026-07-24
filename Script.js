@@ -1,5 +1,6 @@
-      SIZE = 10;
-
+let gameStarted = false;
+let playerTurn = true;
+    SIZE = 10; 
 const playerBoard = document.getElementById("playerBoard");
 const enemyBoard = document.getElementById("enemyBoard");
 const statusText = document.getElementById("status");
