@@ -1,210 +1,232 @@
+// Fleet Commander 2.0
+// Часть 1
+
+const SIZE = 10;
+
+const SHIPS = [4,3,3,2,2,2,1,1,1,1];
+
 let gameStarted = false;
 let playerTurn = true;
+let playerShots = [];
+let enemyShots = [];
 
-const SHIPS = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
-    SIZE = 10; 
-const playerBoard = document.getElementById("playerBoard");
-const enemyBoard = document.getElementById("enemyBoard");
-const statusText = document.getElementById("status");
-const newGameBtn = document.getElementById("newGame");
-const autoPlaceBtn = document.getElementById("autoPlace");
+const playerBoard=document.getElementById("playerBoard");
+const enemyBoard=document.getElementById("enemyBoard");
+const status=document.getElementById("status");
 
-let player = [];
-let enemy = [];
+let player=[];
+let enemy=[];
 
-function createMatrix() {
-    return Array.from({ length: SIZE }, () => Array(SIZE).fill(0));
+function createField(){
+
+    const field=[];
+
+    for(let y=0;y<SIZE;y++){
+
+        field[y]=[];
+
+        for(let x=0;x<SIZE;x++)
+            field[y][x]=0;
+
+    }
+
+    return field;
+
 }
 
-function drawBoard(board, matrix, editable, enemy = false) {
+function inside(x,y){
 
-    board.innerHTML = "";
+    return x>=0 && y>=0 && x<SIZE && y<SIZE;
 
-    for (let y = 0; y < SIZE; y++) {
+}
 
-        for (let x = 0; x < SIZE; x++) {
+function canPlace(field,x,y,length,horizontal){
 
-            const cell = document.createElement("div");
-            cell.className = "cell";
+    for(let i=0;i<length;i++){
 
-            if (!enemy && matrix[y][x] == 1)
-                cell.classList.add("ship");
+        const xx=horizontal?x+i:x;
+        const yy=horizontal?y:y+i;
 
-            if (editable) {
+        if(!inside(xx,yy))
+            return false;
 
-                cell.onclick = function () {
+        for(let dy=-1;dy<=1;dy++){
 
-                    if (gameStarted) return;
+            for(let dx=-1;dx<=1;dx++){
 
-                    matrix[y][x] = matrix[y][x] ? 0 : 1;
+                const nx=xx+dx;
+                const ny=yy+dy;
 
-                    drawBoard(board, matrix, editable, enemy);
-
-                };
-
-            }
-
-            if (enemy) {
-
-                cell.onclick = function () {
-
-                    if (!gameStarted) return;
-
-                    if (cell.classList.contains("hit") ||
-                        cell.classList.contains("miss"))
-                        return;
-
-                    if (matrix[y][x] == 1) {
-
-                        cell.classList.add("hit");
-
-                        statusText.innerHTML = "💥 Попадание!";
-
-                    } else {
-
-                        cell.classList.add("miss");
-
-                        statusText.innerHTML = "🌊 Мимо.";
-
-                    }
-
-                };
+                if(inside(nx,ny) && field[ny][nx]==1)
+                    return false;
 
             }
-
-            board.appendChild(cell);
 
         }
 
     }
 
+    return true;
+
 }
 
-function autoPlace(matrix) {
+function placeShip(field,length){
 
-    for (let y = 0; y < SIZE; y++)
-        for (let x = 0; x < SIZE; x++)
-            matrix[y][x] = 0;
+    while(true){
 
-    function canPlace(x, y, len, horizontal) {
+        const horizontal=Math.random()<0.5;
 
-        for (let i = 0; i < len; i++) {
+        const x=Math.floor(Math.random()*SIZE);
 
-            let xx = horizontal ? x + i : x;
-            let yy = horizontal ? y : y + i;
+        const y=Math.floor(Math.random()*SIZE);
 
-            if (xx >= SIZE || yy >= SIZE)
-                return false;
+        if(!canPlace(field,x,y,length,horizontal))
+            continue;
 
-            for (let dy = -1; dy <= 1; dy++) {
+        for(let i=0;i<length;i++){
 
-                for (let dx = -1; dx <= 1; dx++) {
+            if(horizontal)
+                field[y][x+i]=1;
+            else
+                field[y+i][x]=1;
 
-                    let nx = xx + dx;
-                    let ny = yy + dy;
+        }
 
-                    if (
-                        nx >= 0 &&
-                        ny >= 0 &&
-                        nx < SIZE &&
-                        ny < SIZE &&
-                        matrix[ny][nx] == 1
-                    )
-                        return false;
+        return;
+
+    }
+
+}
+
+function randomFleet(field){
+
+    for(let y=0;y<SIZE;y++)
+        for(let x=0;x<SIZE;x++)
+            field[y][x]=0;
+
+    SHIPS.forEach(ship=>placeShip(field,ship));
+
+}
+function drawBoards(){
+
+    playerBoard.innerHTML="";
+    enemyBoard.innerHTML="";
+
+    for(let y=0;y<SIZE;y++){
+
+        for(let x=0;x<SIZE;x++){
+
+            const p=document.createElement("div");
+            p.className="cell";
+
+            if(player[y][x]==1)
+                p.classList.add("ship");
+
+            if(enemyShots[y][x]==1)
+                p.classList.add("miss");
+
+            if(enemyShots[y][x]==2)
+                p.classList.add("hit");
+
+            playerBoard.appendChild(p);
+
+            const e=document.createElement("div");
+            e.className="cell";
+
+            if(playerShots[y][x]==1)
+                e.classList.add("miss");
+
+            if(playerShots[y][x]==2)
+                e.classList.add("hit");
+
+            e.onclick=function(){
+
+                if(!gameStarted) return;
+
+                if(!playerTurn) return;
+
+                if(playerShots[y][x]!=0) return;
+
+                if(enemy[y][x]==1){
+
+                    playerShots[y][x]=2;
+
+                    status.innerHTML="💥 Попадание!";
+
+                }else{
+
+                    playerShots[y][x]=1;
+
+                    status.innerHTML="🌊 Мимо";
+
+                    playerTurn=false;
+
+                    setTimeout(enemyMove,700);
 
                 }
 
-            }
+                drawBoards();
 
-        }
+            };
 
-        return true;
-
-    }
-
-    function placeShip(len) {
-
-        while (true) {
-
-            let horizontal = Math.random() < 0.5;
-
-            let x = Math.floor(Math.random() * SIZE);
-
-            let y = Math.floor(Math.random() * SIZE);
-
-            if (!canPlace(x, y, len, horizontal))
-                continue;
-
-            for (let i = 0; i < len; i++) {
-
-                if (horizontal)
-                    matrix[y][x + i] = 1;
-                else
-                    matrix[y + i][x] = 1;
-
-            }
-
-            return;
+            enemyBoard.appendChild(e);
 
         }
 
     }
-
-    SHIPS.forEach(placeShip);
 
 }
-
-    let placed = 0;
-
-    while (placed < 20) {
-        const x = Math.floor(Math.random() * SIZE);
-        const y = Math.floor(Math.random() * SIZE);
-
-        if (matrix[y][x] === 0) {
-            matrix[y][x] = 1;
-            placed++;
-        }
-    }
-}
-
 function newGame() {
-    player = createMatrix();
-    enemy = createMatrix();
 
-    drawBoard(playerBoard, player, true);
-    drawBoard(enemyBoard, enemy, false);
+    player = createField();
+    enemy = createField();
+    playerShots=createShotField();
+enemyShots=createShotField();
 
-    statusText.textContent = "Игра готова";
-}
+    randomFleet(player);
+    randomFleet(enemy);
 
-newGameBtn.addEventListener("click", function() {
-    newGame();
-});
+    gameStarted = false;
+    playerTurn = true;
 
-autoPlaceBtn.addEventListener("click", function() {
-    autoPlaceShips(player);
-    autoPlaceShips(enemy);
+    drawBoards();
 
-    drawBoard(playerBoard, player, true);
-    drawBoard(enemyBoard, enemy, false);
-
-    statusText.textContent = "Корабли расставлены";
-});
-document.getElementById("startGame").onclick = function () {
-
-    gameStarted = true;
-
-    statusText.innerHTML = "Ваш ход! Стреляйте по полю противника.
-        ";
-       document.getElementById("startGame").onclick = function () {
-
-    gameStarted = true;
-
-    statusText.innerHTML =
-        "🚀 Бой начался! Стреляйте по полю противника.";
-
-}; 
+    status.innerHTML =
+        "Нажмите «Начать бой»";
 
 }
+
+document
+.getElementById("newGame")
+.onclick = newGame;
+
+document
+.getElementById("autoPlace")
+.onclick = function(){
+
+    randomFleet(player);
+
+    drawBoards();
+
+    status.innerHTML =
+        "Флот расставлен";
+
+};
 
 newGame();
+function createShotField(){
+
+    const arr=[];
+
+    for(let y=0;y<SIZE;y++){
+
+        arr[y]=[];
+
+        for(let x=0;x<SIZE;x++)
+            arr[y][x]=0;
+
+    }
+
+    return arr;
+
+}
