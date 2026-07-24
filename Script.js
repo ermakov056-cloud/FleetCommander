@@ -1,5 +1,7 @@
 let gameStarted = false;
 let playerTurn = true;
+
+const SHIPS = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
     SIZE = 10; 
 const playerBoard = document.getElementById("playerBoard");
 const enemyBoard = document.getElementById("enemyBoard");
