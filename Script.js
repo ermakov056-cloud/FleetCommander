@@ -230,3 +230,44 @@ function createShotField(){
     return arr;
 
 }
+function enemyMove(){
+
+    while(true){
+
+        const x=Math.floor(Math.random()*SIZE);
+        const y=Math.floor(Math.random()*SIZE);
+
+        if(enemyShots[y][x]!=0)
+            continue;
+
+        if(player[y][x]==1){
+
+            enemyShots[y][x]=2;
+            status.innerHTML="💥 Компьютер попал!";
+
+        }else{
+
+            enemyShots[y][x]=1;
+            playerTurn=true;
+            status.innerHTML="Ваш ход";
+
+        }
+
+        break;
+
+    }
+
+    drawBoards();
+
+}
+document
+.getElementById("startGame")
+.onclick=function(){
+
+    gameStarted=true;
+    playerTurn=true;
+
+    status.innerHTML=
+    "🚀 Бой начался! Стреляйте по полю противника.";
+
+}
