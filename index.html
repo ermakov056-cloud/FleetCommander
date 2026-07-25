@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>Fleet Commander Remastered</title>
 
@@ -14,6 +15,8 @@
 
 <div id="background"></div>
 
+<div id="app">
+
 <header>
 
 <div class="logo">
@@ -24,86 +27,114 @@
 
 <div class="version">
 
-Remastered 0.1
+Remastered v0.1
 
 </div>
 
 </header>
 
+<section id="profile">
 
-<main id="menu">
+<div class="avatar">
 
-<div class="profile">
+👨‍✈️
 
-<h2 id="playerName">Адмирал</h2>
+</div>
+
+<div class="info">
+
+<h2 id="playerName">
+
+Адмирал
+
+</h2>
 
 <p>
-Уровень
+
+⭐ Уровень
 <span id="level">1</span>
+
 </p>
 
 <p>
+
+💰 Кредиты
+<span id="money">500</span>
+
+</p>
+
+<p>
+
 XP
 <span id="xp">0</span>
 /
 100
-</p>
-
-<p>
-Кредиты
-
-<span id="money">500</span>
 
 </p>
 
 </div>
 
+</section>
 
-<div class="buttons">
+<nav id="menu">
 
-<button onclick="newGame()">
-
-▶ Новая игра
-
-</button>
-
-<button onclick="continueGame()">
-
-▶ Продолжить
-
-</button>
-
-<button onclick="openCampaign()">
+<button id="btnCampaign">
 
 🗺 Кампания
 
 </button>
 
-<button onclick="openPort()">
+<button id="btnPort">
 
 ⚓ Порт
 
 </button>
 
-<button onclick="openFleet()">
+<button id="btnFleet">
 
-🚢 Мой флот
+🚢 Флот
 
 </button>
 
-<button onclick="openSettings()">
+<button id="btnShop">
+
+🛒 Магазин
+
+</button>
+
+<button id="btnSettings">
 
 ⚙ Настройки
 
 </button>
 
-</div>
+</nav>
+
+<main id="screen">
+
+<h2>
+
+Добро пожаловать!
+
+</h2>
+
+<p>
+
+Добро пожаловать в Fleet Commander Remastered.
+
+</p>
+
+<p>
+
+Выберите раздел в меню.
+
+</p>
 
 </main>
 
-<div id="screen"></div>
+</div>
 
-<script src="script.js"></script>
+<script src="Script.js"></script>
 
 </body>
 </html>
