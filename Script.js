@@ -718,26 +718,56 @@ function animateShot(
 function endGame(playerWin) {
 
 
+    playerTurn = false;
+
+
+    const resultScreen =
+    document.getElementById(
+        "result-screen"
+    );
+
+
+    const resultTitle =
+    document.getElementById(
+        "result-title"
+    );
+
+
+
     if (playerWin) {
 
 
-        showMessage(
-            "🎉 Вы победили!"
-        );
+        resultTitle.innerHTML =
+        "🏆 ПОБЕДА!";
+
+
+        resultTitle.className =
+        "win-title";
+
 
 
     } else {
 
 
-        showMessage(
-            "💥 Компьютер победил"
-        );
+        resultTitle.innerHTML =
+        "💥 ПОРАЖЕНИЕ";
+
+
+        resultTitle.className =
+        "lose-title";
 
 
     }
 
 
-    playerTurn = false;
+
+    if (resultScreen) {
+
+        resultScreen.style.display =
+        "flex";
+
+    }
+
 
 
     saveGameResult(playerWin);
@@ -832,10 +862,44 @@ function showScreen(screenId) {
 function newGame() {
 
 
-    showScreen("game-screen");
+    placedShips = 0;
 
 
-    startGame();
+    playerBoard =
+    createEmptyBoard();
+
+
+    enemyBoard =
+    createEmptyBoard();
+
+
+
+    const result =
+    document.getElementById(
+        "result-screen"
+    );
+
+
+    if(result){
+
+        result.style.display="none";
+
+    }
+
+
+
+    showScreen(
+        "setup-screen"
+    );
+
+
+
+    drawBoards();
+
+
+    showMessage(
+        "Расставьте корабли"
+    );
 
 
 }
@@ -849,8 +913,26 @@ function newGame() {
 function returnToMenu() {
 
 
-    showScreen("menu-screen");
+    const result =
+    document.getElementById(
+        "result-screen"
+    );
 
+
+    if(result){
+
+        result.style.display="none";
+
+    }
+
+
+
+    showScreen(
+        "menu-screen"
+    );
+
+
+    loadStats();
 
 }
 
@@ -1290,22 +1372,7 @@ function setupButtons() {
     if (newGameBtn) {
 
         newGameBtn.onclick =
-        function() {
-
-            placedShips = 0;
-
-            playerBoard =
-            createEmptyBoard();
-
-            showScreen(
-                "setup-screen"
-            );
-
-            drawBoards();
-
-        };
-
-    }
+newGame;
 
 
 
