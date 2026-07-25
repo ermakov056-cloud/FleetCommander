@@ -668,3 +668,231 @@ button:active,
     }
 
 }
+/* ===== ЧАСТЬ 4 ===== */
+/* Главное меню и интерфейс */
+
+
+/* Фон игры */
+body {
+    background:
+        radial-gradient(circle at top, #164b75, #07111f 70%);
+
+    color: white;
+}
+
+
+/* Главный экран */
+.main-screen {
+
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+}
+
+
+/* Логотип */
+.logo {
+
+    font-size: clamp(35px, 10vw, 65px);
+
+    font-weight: 900;
+
+    text-align: center;
+
+    letter-spacing: 2px;
+
+    text-shadow:
+        0 0 10px #00aaff,
+        0 0 20px #0066ff;
+
+    margin-bottom: 30px;
+
+}
+
+
+/* Подзаголовок */
+.subtitle {
+
+    text-align: center;
+
+    font-size: 18px;
+
+    opacity: 0.8;
+
+    margin-bottom: 25px;
+
+}
+
+
+/* Блок меню */
+.menu-box {
+
+    width: 100%;
+
+    max-width: 420px;
+
+    padding: 20px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(255,255,255,0.08);
+
+    backdrop-filter: blur(10px);
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.4);
+
+}
+
+
+/* Кнопки меню */
+.menu-button {
+
+    background:
+        linear-gradient(135deg,#008cff,#0051cc);
+
+    color:white;
+
+    border:2px solid rgba(255,255,255,0.2);
+
+    margin-bottom:15px;
+
+    transition:0.25s;
+
+}
+
+
+/* Наведение */
+.menu-button:hover {
+
+    filter:brightness(1.2);
+
+}
+
+
+/* Неактивная кнопка */
+.menu-button:disabled {
+
+    opacity:0.5;
+
+    transform:none;
+
+}
+
+
+/* Окно настроек */
+.settings-window {
+
+    width:90%;
+
+    max-width:450px;
+
+    padding:25px;
+
+    border-radius:20px;
+
+    background:#10263d;
+
+    box-shadow:
+        0 0 40px rgba(0,0,0,0.6);
+
+}
+
+
+/* Заголовки окон */
+.window-title {
+
+    font-size:28px;
+
+    text-align:center;
+
+    margin-bottom:20px;
+
+}
+
+
+/* Переключатели */
+.option {
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px;
+
+    margin-bottom:10px;
+
+    background:rgba(255,255,255,0.08);
+
+    border-radius:10px;
+
+}
+
+
+/* Нижняя панель */
+.bottom-panel {
+
+    position:fixed;
+
+    bottom:15px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:90%;
+
+    max-width:450px;
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+
+/* Маленькие кнопки */
+.small-button {
+
+    flex:1;
+
+    min-height:45px;
+
+    font-size:15px;
+
+}
+
+
+/* Защита от выхода элементов */
+* {
+
+    box-sizing:border-box;
+
+}
+
+
+/* iPhone с вырезом */
+@supports (padding:max(0px)) {
+
+    .main-screen {
+
+        padding-bottom:
+        max(20px, env(safe-area-inset-bottom));
+
+    }
+
+}
