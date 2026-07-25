@@ -491,3 +491,507 @@ function randomPlayerShips(){
 
 
 }
+/* =====================================
+   FLEET COMMANDER
+   Часть 3/4
+===================================== */
+
+
+
+/* Отрисовка двух полей */
+
+function drawBoards(){
+
+
+    createBoardHTML(
+        "player-board",
+        playerBoard,
+        false
+    );
+
+
+    createBoardHTML(
+        "enemy-board",
+        enemyBoard,
+        true
+    );
+
+
+}
+
+
+
+
+/* Создание поля HTML */
+
+function createBoardHTML(
+    id,
+    board,
+    enemy
+){
+
+
+    let container =
+    document.getElementById(id);
+
+
+
+    if(!container){
+
+        return;
+
+    }
+
+
+
+    container.innerHTML="";
+
+
+
+    for(let y=0;y<SIZE;y++){
+
+
+        for(let x=0;x<SIZE;x++){
+
+
+
+            let cell =
+            document.createElement(
+                "div"
+            );
+
+
+            cell.className="cell";
+
+
+            cell.dataset.x=x;
+
+            cell.dataset.y=y;
+
+
+
+
+            if(
+                board[y][x].ship &&
+                !enemy
+            ){
+
+                cell.classList.add(
+                    "ship-part"
+                );
+
+            }
+
+
+
+
+            if(
+                board[y][x].hit
+            ){
+
+
+                if(
+                    board[y][x].ship
+                ){
+
+                    cell.classList.add(
+                        "hit"
+                    );
+
+
+                }else{
+
+
+                    cell.classList.add(
+                        "miss"
+                    );
+
+
+                }
+
+
+            }
+
+
+
+
+            if(enemy){
+
+
+                cell.onclick=function(){
+
+
+                    playerShoot(
+                        x,
+                        y
+                    );
+
+
+                };
+
+
+            }else{
+
+
+                cell.onclick=function(){
+
+
+                    if(!gameStarted){
+
+                        placePlayerShip(
+                            x,
+                            y
+                        );
+
+                    }
+
+
+                };
+
+
+            }
+
+
+
+            container.appendChild(cell);
+
+
+        }
+
+
+    }
+
+
+}
+
+
+
+/* Выстрел игрока */
+
+function playerShoot(
+    x,
+    y
+){
+
+
+    if(!gameStarted){
+
+        return;
+
+    }
+
+
+
+    if(!playerTurn){
+
+        return;
+
+    }
+
+
+
+    let cell =
+    enemyBoard[y][x];
+
+
+
+    if(cell.hit){
+
+
+        showMessage(
+            "Вы уже стреляли сюда"
+        );
+
+
+        return;
+
+    }
+
+
+
+    cell.hit=true;
+
+
+
+    if(cell.ship){
+
+
+        showMessage(
+            "Попадание! Ещё выстрел"
+        );
+
+
+        drawBoards();
+
+
+
+        if(checkWin(enemyBoard)){
+
+
+            endGame(true);
+
+
+        }
+
+
+    }else{
+
+
+        showMessage(
+            "Промах"
+        );
+
+
+        playerTurn=false;
+
+
+        drawBoards();
+
+
+
+        setTimeout(
+            enemyShoot,
+            800
+        );
+
+
+    }
+
+
+}
+
+
+
+
+/* Ход компьютера */
+
+function enemyShoot(){
+
+
+
+    let x;
+
+    let y;
+
+
+
+    do{
+
+
+        x=
+        Math.floor(
+            Math.random()*SIZE
+        );
+
+
+        y=
+        Math.floor(
+            Math.random()*SIZE
+        );
+
+
+    }
+    while(
+        playerBoard[y][x].hit
+    );
+
+
+
+
+    let cell =
+    playerBoard[y][x];
+
+
+
+    cell.hit=true;
+
+
+
+    if(cell.ship){
+
+
+        showMessage(
+            "Компьютер попал!"
+        );
+
+
+
+        if(
+            checkWin(playerBoard)
+        ){
+
+            endGame(false);
+
+            return;
+
+        }
+
+
+
+        setTimeout(
+            enemyShoot,
+            700
+        );
+
+
+    }else{
+
+
+        playerTurn=true;
+
+
+        showMessage(
+            "Компьютер промахнулся. Ваш ход"
+        );
+
+
+    }
+
+
+
+    drawBoards();
+
+
+}
+
+
+
+
+/* Проверка победы */
+
+function checkWin(board){
+
+
+
+    for(let y=0;y<SIZE;y++){
+
+
+        for(let x=0;x<SIZE;x++){
+
+
+
+            if(
+                board[y][x].ship &&
+                !board[y][x].hit
+            ){
+
+                return false;
+
+            }
+
+
+        }
+
+    }
+
+
+    return true;
+
+}
+
+
+
+
+/* Завершение игры */
+
+function endGame(win){
+
+
+    gameStarted=false;
+
+
+    let result =
+    document.getElementById(
+        "result-screen"
+    );
+
+
+    let title =
+    document.getElementById(
+        "result-title"
+    );
+
+
+
+    if(win){
+
+
+        title.innerHTML=
+        "🏆 ПОБЕДА";
+
+
+        title.className=
+        "win-title";
+
+
+        saveResult(true);
+
+
+
+    }else{
+
+
+        title.innerHTML=
+        "💥 ПОРАЖЕНИЕ";
+
+
+        title.className=
+        "lose-title";
+
+
+        saveResult(false);
+
+
+    }
+
+
+
+    if(result){
+
+        result.style.display="flex";
+
+    }
+
+
+}
+
+
+
+/* Сохранение статистики */
+
+function saveResult(win){
+
+
+    let stats =
+    JSON.parse(
+        localStorage.getItem(
+            "fleetStats"
+        )
+    )
+    ||
+    {
+        wins:0,
+        loses:0
+    };
+
+
+
+    if(win){
+
+        stats.wins++;
+
+    }else{
+
+        stats.loses++;
+
+    }
+
+
+
+    localStorage.setItem(
+        "fleetStats",
+        JSON.stringify(stats)
+    );
+
+
+}
