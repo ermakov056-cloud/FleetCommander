@@ -1250,17 +1250,16 @@ function setupButtons(){
 
 
     let newGame =
-    document.getElementById(
-        "new-game"
-    );
+document.getElementById(
+    "new-game"
+);
 
+if(newGame){
 
-    if(newGame){
+    newGame.onclick =
+    newGame;
 
-        newGame.onclick =
-        newGame;
-
-    }
+}
 
 
 
