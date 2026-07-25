@@ -1267,3 +1267,221 @@ function setupBoardClick(
     );
 
 }
+/* ===== SCRIPT.JS ===== */
+/* ЧАСТЬ 6 */
+/* Подключение интерфейса */
+
+
+/*
+Создание обработчиков кнопок
+*/
+
+function setupButtons() {
+
+
+    // Новая игра
+
+    const newGameBtn =
+    document.getElementById(
+        "new-game"
+    );
+
+
+    if (newGameBtn) {
+
+        newGameBtn.onclick =
+        function() {
+
+            placedShips = 0;
+
+            playerBoard =
+            createEmptyBoard();
+
+            showScreen(
+                "setup-screen"
+            );
+
+            drawBoards();
+
+        };
+
+    }
+
+
+
+    // Случайная расстановка
+
+    const randomBtn =
+    document.getElementById(
+        "random-button"
+    );
+
+
+    if (randomBtn) {
+
+        randomBtn.onclick =
+        randomPlayerShips;
+
+    }
+
+
+
+    // Поворот
+
+    const rotateBtn =
+    document.getElementById(
+        "rotate-button"
+    );
+
+
+    if (rotateBtn) {
+
+        rotateBtn.onclick =
+        rotateShip;
+
+    }
+
+
+
+    // Начать бой
+
+    const startBattleBtn =
+    document.getElementById(
+        "start-battle"
+    );
+
+
+    if (startBattleBtn) {
+
+        startBattleBtn.onclick =
+        startBattle;
+
+    }
+
+
+
+    // Назад в меню
+
+    const backBtn =
+    document.getElementById(
+        "back-menu"
+    );
+
+
+    if (backBtn) {
+
+        backBtn.onclick =
+        returnToMenu;
+
+    }
+
+
+
+    // Очистить статистику
+
+    const clearBtn =
+    document.getElementById(
+        "clear-stats"
+    );
+
+
+    if (clearBtn) {
+
+        clearBtn.onclick =
+        clearStats;
+
+    }
+
+}
+
+
+
+/*
+Подключение кликов по полю
+*/
+
+function setupBoardEvents() {
+
+
+    const player =
+    document.getElementById(
+        "player-board"
+    );
+
+
+    if (player) {
+
+
+        player.onclick =
+        function(event) {
+
+
+            let cell =
+            event.target;
+
+
+            if (
+                !cell.classList.contains(
+                    "cell"
+                )
+            ) {
+
+                return;
+
+            }
+
+
+
+            let x =
+            Number(
+                cell.dataset.x
+            );
+
+
+            let y =
+            Number(
+                cell.dataset.y
+            );
+
+
+
+            placePlayerShip(
+                x,
+                y
+            );
+
+
+        };
+
+
+    }
+
+
+}
+
+
+
+/*
+Запуск интерфейса
+*/
+
+window.addEventListener(
+"load",
+function() {
+
+
+    setupButtons();
+
+
+    setupBoardEvents();
+
+
+    showScreen(
+        "menu-screen"
+    );
+
+
+    loadStats();
+
+
+});
