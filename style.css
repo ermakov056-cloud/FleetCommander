@@ -1136,3 +1136,287 @@ body {
     }
 
 }
+/* ===== ЧАСТЬ 6 ===== */
+/* Бой против компьютера */
+
+
+/* Экран боя */
+.combat-screen {
+
+    width:100%;
+
+    min-height:100vh;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:15px;
+
+    padding:15px;
+
+}
+
+
+/* Панель состояния */
+.status-panel {
+
+    width:95%;
+
+    max-width:450px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px 15px;
+
+    border-radius:15px;
+
+    background:rgba(255,255,255,0.1);
+
+}
+
+
+/* Индикатор хода */
+.turn-indicator {
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    text-align:center;
+
+}
+
+
+/* Ход игрока */
+.player-turn {
+
+    color:#00e676;
+
+    text-shadow:
+        0 0 10px #00e676;
+
+}
+
+
+/* Ход компьютера */
+.enemy-turn {
+
+    color:#ff5252;
+
+    text-shadow:
+        0 0 10px #ff5252;
+
+}
+
+
+/* Панель здоровья */
+.health-panel {
+
+    width:95%;
+
+    max-width:450px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
+
+}
+
+
+/* Строка здоровья */
+.health-row {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+
+/* Название корабля */
+.health-name {
+
+    width:90px;
+
+    font-size:14px;
+
+}
+
+
+/* Полоса здоровья */
+.health-bar {
+
+    flex:1;
+
+    height:12px;
+
+    background:#263238;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+}
+
+
+/* Заполнение здоровья */
+.health-fill {
+
+    height:100%;
+
+    background:#00c853;
+
+    transition:0.4s;
+
+}
+
+
+/* Повреждение */
+.health-fill.damage {
+
+    background:#ff9800;
+
+}
+
+
+/* Почти уничтожен */
+.health-fill.low {
+
+    background:#f44336;
+
+}
+
+
+/* Анимация выстрела */
+.shot {
+
+    animation:shotAnimation 0.4s;
+
+}
+
+
+@keyframes shotAnimation {
+
+    0% {
+
+        transform:scale(1);
+
+    }
+
+    50% {
+
+        transform:scale(1.3);
+
+        box-shadow:
+        0 0 25px #ff0000;
+
+    }
+
+    100% {
+
+        transform:scale(1);
+
+    }
+
+}
+
+
+/* Взрыв */
+.explosion {
+
+    animation:explosionAnimation 0.6s;
+
+}
+
+
+@keyframes explosionAnimation {
+
+    0% {
+
+        transform:scale(0.5);
+
+        opacity:0;
+
+    }
+
+
+    50% {
+
+        transform:scale(1.4);
+
+        opacity:1;
+
+    }
+
+
+    100% {
+
+        transform:scale(1);
+
+        opacity:1;
+
+    }
+
+}
+
+
+/* Сообщение о ходе */
+.game-message {
+
+    width:90%;
+
+    max-width:420px;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    text-align:center;
+
+    font-size:18px;
+
+    background:
+    rgba(0,140,255,0.15);
+
+}
+
+
+/* Мобильный режим */
+@media(max-width:600px){
+
+    .status-panel {
+
+        font-size:14px;
+
+    }
+
+
+    .turn-indicator {
+
+        font-size:18px;
+
+    }
+
+
+    .health-name {
+
+        width:70px;
+
+        font-size:12px;
+
+    }
+
+}
