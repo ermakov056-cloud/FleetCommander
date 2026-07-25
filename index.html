@@ -3,45 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fleet Commander 2.0</title>
+
+<title>Fleet Commander Remastered</title>
 
 <link rel="stylesheet" href="style.css">
 
 </head>
+
 <body>
 
-<div class="background"></div>
+<div id="background"></div>
 
 <header>
-<h1>⚓ Fleet Commander</h1>
-<p>Морской бой нового поколения</p>
+
+<div class="logo">
+
+⚓ Fleet Commander
+
+</div>
+
+<div class="version">
+
+Remastered 0.1
+
+</div>
+
 </header>
 
-<div class="controls">
-<button id="newGame">Новая игра</button>
-<button id="startGame">Начать бой</button>
-<button id="autoPlace">Авторасстановка</button>
+
+<main id="menu">
+
+<div class="profile">
+
+<h2 id="playerName">Адмирал</h2>
+
+<p>
+Уровень
+<span id="level">1</span>
+</p>
+
+<p>
+XP
+<span id="xp">0</span>
+/
+100
+</p>
+
+<p>
+Кредиты
+
+<span id="money">500</span>
+
+</p>
+
 </div>
 
-<main>
 
-<div class="boardBox">
-<h2>Ваш флот</h2>
-<div id="playerBoard" class="board"></div>
-</div>
+<div class="buttons">
 
-<div class="boardBox">
-<h2>Противник</h2>
-<div id="enemyBoard" class="board"></div>
+<button onclick="newGame()">
+
+▶ Новая игра
+
+</button>
+
+<button onclick="continueGame()">
+
+▶ Продолжить
+
+</button>
+
+<button onclick="openCampaign()">
+
+🗺 Кампания
+
+</button>
+
+<button onclick="openPort()">
+
+⚓ Порт
+
+</button>
+
+<button onclick="openFleet()">
+
+🚢 Мой флот
+
+</button>
+
+<button onclick="openSettings()">
+
+⚙ Настройки
+
+</button>
+
 </div>
 
 </main>
 
-<div id="status">
-Добро пожаловать, Командир.
-</div>
+<div id="screen"></div>
 
-<script src="Script.js"></script>
+<script src="script.js"></script>
 
 </body>
 </html>
