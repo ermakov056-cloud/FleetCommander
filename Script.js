@@ -334,3 +334,26 @@ function resetProgress(){
     }
 
 }
+function startMission(id){
+
+    switch(id){
+
+        case 1:
+
+            alert("⚓ Миссия 1\n\nЗащитите главный порт.");
+
+        break;
+
+        case 2:
+
+            alert("🏝 Миссия 2\n\nОсвободите остров.");
+
+        break;
+
+        default:
+
+            alert("Миссия пока недоступна.");
+
+    }
+
+}
