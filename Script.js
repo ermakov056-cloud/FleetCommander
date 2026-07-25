@@ -985,3 +985,285 @@ window.onload = function() {
 
 
 };
+/* ===== SCRIPT.JS ===== */
+/* ЧАСТЬ 5 */
+/* Ручная расстановка кораблей */
+
+
+/* Текущий выбранный корабль */
+
+let selectedShip = null;
+
+let shipDirection = "horizontal";
+
+let placedShips = 0;
+
+
+
+/*
+Выбор корабля
+*/
+
+function selectShip(index) {
+
+
+    selectedShip = SHIPS[index];
+
+
+    document
+    .querySelectorAll(".ship-card")
+    .forEach(card => {
+
+        card.classList.remove(
+            "selected"
+        );
+
+    });
+
+
+
+    let card =
+    document.querySelector(
+        `[data-ship="${index}"]`
+    );
+
+
+    if (card) {
+
+        card.classList.add(
+            "selected"
+        );
+
+    }
+
+
+}
+
+
+
+/*
+Поворот корабля
+*/
+
+function rotateShip() {
+
+
+    if (
+        shipDirection === "horizontal"
+    ) {
+
+        shipDirection = "vertical";
+
+
+    } else {
+
+
+        shipDirection = "horizontal";
+
+
+    }
+
+
+
+    showMessage(
+        "Направление изменено"
+    );
+
+}
+
+
+
+/*
+Попытка поставить корабль
+*/
+
+function placePlayerShip(
+    x,
+    y
+) {
+
+
+    if (!selectedShip) {
+
+
+        showMessage(
+            "Выберите корабль"
+        );
+
+
+        return;
+
+    }
+
+
+
+    if (
+        canPlaceShip(
+            playerBoard,
+            x,
+            y,
+            selectedShip.size,
+            shipDirection === "horizontal"
+        )
+    ) {
+
+
+
+        placeShip(
+            playerBoard,
+            x,
+            y,
+            selectedShip.size,
+            shipDirection === "horizontal"
+        );
+
+
+
+        placedShips++;
+
+
+        showMessage(
+            "Корабль установлен"
+        );
+
+
+
+        drawBoards();
+
+
+
+        if (
+            placedShips >= SHIPS.length
+        ) {
+
+
+            showMessage(
+                "Все корабли готовы!"
+            );
+
+
+        }
+
+
+
+    } else {
+
+
+        showMessage(
+            "Сюда нельзя поставить корабль"
+        );
+
+
+    }
+
+
+}
+
+
+
+/*
+Случайная расстановка игрока
+*/
+
+function randomPlayerShips() {
+
+
+    playerBoard =
+    createEmptyBoard();
+
+
+
+    placeAllShips(
+        playerBoard
+    );
+
+
+    placedShips =
+    SHIPS.length;
+
+
+
+    drawBoards();
+
+
+
+    showMessage(
+        "Корабли расставлены"
+    );
+
+
+}
+
+
+
+/*
+Начать бой после подготовки
+*/
+
+function startBattle() {
+
+
+    if (
+        placedShips < SHIPS.length
+    ) {
+
+
+        showMessage(
+            "Сначала расставьте корабли"
+        );
+
+
+        return;
+
+    }
+
+
+
+    enemyBoard =
+    createEmptyBoard();
+
+
+
+    placeAllShips(
+        enemyBoard
+    );
+
+
+
+    showScreen(
+        "game-screen"
+    );
+
+
+    playerTurn = true;
+
+
+
+    drawBoards();
+
+
+
+    showMessage(
+        "Ваш ход"
+    );
+
+}
+
+
+
+/*
+Обработка клика по своему полю
+*/
+
+function setupBoardClick(
+    x,
+    y
+) {
+
+
+    placePlayerShip(
+        x,
+        y
+    );
+
+}
