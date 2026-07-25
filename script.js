@@ -1,61 +1,55 @@
 /* =====================================
    FLEET COMMANDER
-   Финальный script.js
-   Часть 1/4
+   script.js
+   Часть 1
 ===================================== */
 
+"use strict";
+
+/* ---------- Константы ---------- */
 
 const SIZE = 10;
 
-
 const SHIPS = [
-    {name:"4 палубы", size:4},
-    {name:"3 палубы", size:3},
-    {name:"3 палубы", size:3},
-    {name:"2 палубы", size:2},
-    {name:"2 палубы", size:2},
-    {name:"2 палубы", size:2},
-    {name:"1 палуба", size:1},
-    {name:"1 палуба", size:1},
-    {name:"1 палуба", size:1},
-    {name:"1 палуба", size:1}
+    { id: 0, size: 4, placed: false },
+    { id: 1, size: 3, placed: false },
+    { id: 2, size: 3, placed: false },
+    { id: 3, size: 2, placed: false },
+    { id: 4, size: 2, placed: false },
+    { id: 5, size: 2, placed: false },
+    { id: 6, size: 1, placed: false },
+    { id: 7, size: 1, placed: false },
+    { id: 8, size: 1, placed: false },
+    { id: 9, size: 1, placed: false }
 ];
 
+/* ---------- Переменные ---------- */
 
-let playerBoard;
-
-let enemyBoard;
-
+let playerBoard = [];
+let enemyBoard = [];
 
 let selectedShip = null;
-
 let direction = "horizontal";
 
-
 let playerTurn = true;
-
 let gameStarted = false;
 
+/* ---------- Создание поля ---------- */
 
+function createBoard() {
 
-/* Создание пустого поля */
+    const board = [];
 
-function createBoard(){
+    for (let y = 0; y < SIZE; y++) {
 
-    let board=[];
+        board[y] = [];
 
+        for (let x = 0; x < SIZE; x++) {
 
-    for(let y=0;y<SIZE;y++){
+            board[y][x] = {
 
-        board[y]=[];
-
-        for(let x=0;x<SIZE;x++){
-
-            board[y][x]={
-
-                ship:false,
-
-                hit:false
+                ship: false,
+                hit: false
 
             };
 
@@ -63,250 +57,157 @@ function createBoard(){
 
     }
 
-
     return board;
 
 }
 
+/* ---------- Сброс кораблей ---------- */
 
+function resetShips() {
 
-/* Запуск новой игры */
+    SHIPS.forEach(ship => {
 
-function newGame(){
-
-
-    playerBoard=createBoard();
-
-    enemyBoard=createBoard();
-
-
-    placeAllShips(enemyBoard);
-
-
-    gameStarted=false;
-
-
-    showScreen(
-        "setup-screen"
-    );
-
-
-    drawBoards();
-
-
-    showMessage(
-        "Расставьте корабли"
-    );
-
-
-}
-
-
-
-/* Показ экранов */
-
-function showScreen(id){
-
-
-    document
-    .querySelectorAll(".screen")
-    .forEach(s=>{
-
-        s.style.display="none";
+        ship.placed = false;
 
     });
 
+}
 
+/* ---------- Показ экрана ---------- */
 
-    let screen=
-    document.getElementById(id);
+function showScreen(id) {
 
+    document.querySelectorAll(".screen").forEach(screen => {
 
-    if(screen){
+        screen.style.display = "none";
 
-        screen.style.display="flex";
+    });
+
+    const screen = document.getElementById(id);
+
+    if (screen) {
+
+        screen.style.display = "flex";
 
     }
 
 }
 
+/* ---------- Сообщение ---------- */
 
+function showMessage(text) {
 
-/* Сообщение */
+    const box = document.getElementById("game-message");
 
-function showMessage(text){
+    if (box) {
 
-
-    let box=
-    document.getElementById(
-        "game-message"
-    );
-
-
-    if(box){
-
-        box.innerText=text;
+        box.textContent = text;
 
     }
+
+}
+
+/* ---------- Новая игра ---------- */
+
+function newGame() {
+
+    playerBoard = createBoard();
+
+    enemyBoard = createBoard();
+
+    placeAllShips(enemyBoard);
+
+    resetShips();
+
+    selectedShip = null;
+
+    direction = "horizontal";
+
+    playerTurn = true;
+
+    gameStarted = false;
+
+    showScreen("setup-screen");
+
+    drawBoards();
+
+    showMessage("Выберите корабль и начните расстановку.");
 
 }
 /* =====================================
    FLEET COMMANDER
-   Часть 2/4
+   script.js
+   Часть 2
 ===================================== */
 
+/* ---------- Проверка размещения ---------- */
 
-/* Проверка размещения корабля */
+function canPlaceShip(board, x, y, size, horizontal) {
 
-function canPlaceShip(
-    board,
-    x,
-    y,
-    size,
-    horizontal
-){
+    for (let i = 0; i < size; i++) {
 
+        const nx = horizontal ? x + i : x;
+        const ny = horizontal ? y : y + i;
 
-    for(let i=0;i<size;i++){
-
-
-        let nx =
-        horizontal ? x+i : x;
-
-
-        let ny =
-        horizontal ? y : y+i;
-
-
-
-        if(
-            nx<0 ||
-            ny<0 ||
-            nx>=SIZE ||
-            ny>=SIZE
-        ){
-
+        if (nx < 0 || ny < 0 || nx >= SIZE || ny >= SIZE) {
             return false;
-
         }
 
+        for (let yy = ny - 1; yy <= ny + 1; yy++) {
 
+            for (let xx = nx - 1; xx <= nx + 1; xx++) {
 
-        for(
-            let yy=ny-1;
-            yy<=ny+1;
-            yy++
-        ){
-
-
-            for(
-                let xx=nx-1;
-                xx<=nx+1;
-                xx++
-            ){
-
-
-                if(
-                    yy>=0 &&
-                    xx>=0 &&
-                    yy<SIZE &&
-                    xx<SIZE
-                ){
-
-
-                    if(
-                        board[yy][xx].ship
-                    ){
-
-                        return false;
-
-                    }
-
-
+                if (
+                    yy >= 0 &&
+                    yy < SIZE &&
+                    xx >= 0 &&
+                    xx < SIZE &&
+                    board[yy][xx].ship
+                ) {
+                    return false;
                 }
-
 
             }
 
-
         }
 
-
     }
-
 
     return true;
 
 }
 
+/* ---------- Размещение корабля ---------- */
 
+function placeShip(board, x, y, size, horizontal) {
 
-/* Установка корабля */
+    for (let i = 0; i < size; i++) {
 
-function placeShip(
-    board,
-    x,
-    y,
-    size,
-    horizontal
-){
+        const nx = horizontal ? x + i : x;
+        const ny = horizontal ? y : y + i;
 
-
-    for(let i=0;i<size;i++){
-
-
-        let nx =
-        horizontal ? x+i : x;
-
-
-        let ny =
-        horizontal ? y : y+i;
-
-
-
-        board[ny][nx].ship=true;
-
+        board[ny][nx].ship = true;
 
     }
 
-
 }
 
+/* ---------- Автоматическая расстановка ---------- */
 
+function placeAllShips(board) {
 
-/* Автоматическая расстановка */
+    SHIPS.forEach(ship => {
 
-function placeAllShips(board){
+        let placed = false;
 
+        while (!placed) {
 
-    SHIPS.forEach(ship=>{
+            const x = Math.floor(Math.random() * SIZE);
+            const y = Math.floor(Math.random() * SIZE);
 
+            const horizontal = Math.random() < 0.5;
 
-        let placed=false;
-
-
-
-        while(!placed){
-
-
-            let x=
-            Math.floor(
-                Math.random()*SIZE
-            );
-
-
-            let y=
-            Math.floor(
-                Math.random()*SIZE
-            );
-
-
-            let horizontal=
-            Math.random()>0.5;
-
-
-
-            if(
+            if (
                 canPlaceShip(
                     board,
                     x,
@@ -314,8 +215,7 @@ function placeAllShips(board){
                     ship.size,
                     horizontal
                 )
-            ){
-
+            ) {
 
                 placeShip(
                     board,
@@ -325,183 +225,175 @@ function placeAllShips(board){
                     horizontal
                 );
 
-
-                placed=true;
+                placed = true;
 
             }
 
-
         }
 
-
     });
 
-
 }
 
+/* ---------- Выбор корабля ---------- */
 
+function selectShip(index) {
 
-/* Выбранный корабль */
+    if (SHIPS[index].placed) {
 
-function selectShip(index){
-
-
-    selectedShip =
-    SHIPS[index];
-
-
-
-    document
-    .querySelectorAll(".ship-card")
-    .forEach(card=>{
-
-        card.classList.remove(
-            "selected"
-        );
-
-    });
-
-
-
-    let card=
-    document.querySelector(
-        `[data-ship="${index}"]`
-    );
-
-
-    if(card){
-
-        card.classList.add(
-            "selected"
-        );
-
-    }
-
-
-}
-
-
-
-/* Поворот корабля */
-
-function rotateShip(){
-
-
-    if(direction==="horizontal"){
-
-        direction="vertical";
-
-    }else{
-
-        direction="horizontal";
-
-    }
-
-
-    showMessage(
-        "Направление изменено"
-    );
-
-}
-
-
-
-/* Установка корабля игроком */
-
-function placePlayerShip(
-    x,
-    y
-){
-
-
-    if(!selectedShip){
-
-        showMessage(
-            "Выберите корабль"
-        );
+        showMessage("Этот корабль уже установлен.");
 
         return;
 
     }
 
+    selectedShip = SHIPS[index];
 
+    document
+        .querySelectorAll(".ship-card")
+        .forEach(card => card.classList.remove("selected"));
 
-    if(
-        canPlaceShip(
-            playerBoard,
-            x,
-            y,
-            selectedShip.size,
-            direction==="horizontal"
-        )
-    ){
+    const card = document.querySelector(
+        `[data-ship="${index}"]`
+    );
 
+    if (card) {
 
-        placeShip(
-            playerBoard,
-            x,
-            y,
-            selectedShip.size,
-            direction==="horizontal"
-        );
-
-
-        drawBoards();
-
-
-        showMessage(
-            "Корабль установлен"
-        );
-
-
-    }else{
-
-
-        showMessage(
-            "Сюда нельзя поставить"
-        );
-
+        card.classList.add("selected");
 
     }
 
+}
+
+/* ---------- Поворот ---------- */
+
+function rotateShip() {
+
+    direction =
+        direction === "horizontal"
+            ? "vertical"
+            : "horizontal";
+
+    showMessage(
+        direction === "horizontal"
+            ? "Горизонтально"
+            : "Вертикально"
+    );
 
 }
 
+/* ---------- Расстановка игроком ---------- */
 
+function placePlayerShip(x, y) {
 
-/* Случайная расстановка игрока */
+    if (!selectedShip) {
 
-function randomPlayerShips(){
+        showMessage("Сначала выберите корабль.");
 
+        return;
 
-    playerBoard=createBoard();
+    }
 
+    if (
+        !canPlaceShip(
+            playerBoard,
+            x,
+            y,
+            selectedShip.size,
+            direction === "horizontal"
+        )
+    ) {
 
-    placeAllShips(
-        playerBoard
+        showMessage("Сюда поставить нельзя.");
+
+        return;
+
+    }
+
+    placeShip(
+        playerBoard,
+        x,
+        y,
+        selectedShip.size,
+        direction === "horizontal"
     );
 
+    selectedShip.placed = true;
+
+    document
+        .querySelectorAll(".ship-card")
+        .forEach(card => {
+
+            if (
+                Number(card.dataset.ship) === selectedShip.id
+            ) {
+
+                card.classList.add("placed");
+                card.classList.remove("selected");
+
+            }
+
+        });
+
+    selectedShip = null;
 
     drawBoards();
 
+    const ready = SHIPS.every(ship => ship.placed);
 
-    showMessage(
-        "Флот готов"
-    );
+    if (ready) {
 
+        showMessage(
+            "Флот готов. Нажмите «Начать бой»."
+        );
+
+    } else {
+
+        showMessage(
+            "Выберите следующий корабль."
+        );
+
+    }
+
+}
+
+/* ---------- Случайная расстановка ---------- */
+
+function randomPlayerShips() {
+
+    playerBoard = createBoard();
+
+    resetShips();
+
+    placeAllShips(playerBoard);
+
+    SHIPS.forEach(ship => ship.placed = true);
+
+    document
+        .querySelectorAll(".ship-card")
+        .forEach(card => {
+
+            card.classList.add("placed");
+            card.classList.remove("selected");
+
+        });
+
+    selectedShip = null;
+
+    drawBoards();
+
+    showMessage("Флот расставлен автоматически.");
 
 }
 /* =====================================
    FLEET COMMANDER
-   Часть 3/4
+   script.js
+   Часть 3
 ===================================== */
 
+/* ---------- Отрисовка полей ---------- */
 
-
-/* Отрисовка двух полей */
-
-function drawBoards(){
-
+function drawBoards() {
 
     createBoardHTML(
         "player-board",
@@ -509,316 +401,169 @@ function drawBoards(){
         false
     );
 
-
     createBoardHTML(
         "enemy-board",
         enemyBoard,
         true
     );
 
-
 }
 
+/* ---------- Создание HTML поля ---------- */
 
+function createBoardHTML(id, board, enemy) {
 
+    const container =
+        document.getElementById(id);
 
-/* Создание поля HTML */
+    if (!container) return;
 
-function createBoardHTML(
-    id,
-    board,
-    enemy
-){
+    container.innerHTML = "";
 
+    for (let y = 0; y < SIZE; y++) {
 
-    let container =
-    document.getElementById(id);
+        for (let x = 0; x < SIZE; x++) {
 
+            const cell =
+                document.createElement("div");
 
+            cell.className = "cell";
 
-    if(!container){
-
-        return;
-
-    }
-
-
-
-    container.innerHTML="";
-
-
-
-    for(let y=0;y<SIZE;y++){
-
-
-        for(let x=0;x<SIZE;x++){
-
-
-
-            let cell =
-            document.createElement(
-                "div"
-            );
-
-
-            cell.className="cell";
-
-
-            cell.dataset.x=x;
-
-            cell.dataset.y=y;
-
-
-
-
-            if(
+            if (
                 board[y][x].ship &&
                 !enemy
-            ){
-
-                cell.classList.add(
-                    "ship-part"
-                );
-
+            ) {
+                cell.classList.add("ship-part");
             }
 
+            if (board[y][x].hit) {
 
+                if (board[y][x].ship) {
 
+                    cell.classList.add("hit");
 
-            if(
-                board[y][x].hit
-            ){
+                } else {
 
-
-                if(
-                    board[y][x].ship
-                ){
-
-                    cell.classList.add(
-                        "hit"
-                    );
-
-
-                }else{
-
-
-                    cell.classList.add(
-                        "miss"
-                    );
-
+                    cell.classList.add("miss");
 
                 }
 
-
             }
 
+            cell.onclick = function () {
 
+                if (enemy) {
 
+                    playerShoot(x, y);
 
-            if(enemy){
+                } else {
 
+                    if (!gameStarted) {
 
-                cell.onclick=function(){
-
-
-                    playerShoot(
-                        x,
-                        y
-                    );
-
-
-                };
-
-
-            }else{
-
-
-                cell.onclick=function(){
-
-
-                    if(!gameStarted){
-
-                        placePlayerShip(
-                            x,
-                            y
-                        );
+                        placePlayerShip(x, y);
 
                     }
 
+                }
 
-                };
-
-
-            }
-
-
+            };
 
             container.appendChild(cell);
 
-
         }
 
-
     }
-
 
 }
 
+/* ---------- Выстрел игрока ---------- */
 
+function playerShoot(x, y) {
 
-/* Выстрел игрока */
+    if (!gameStarted) return;
 
-function playerShoot(
-    x,
-    y
-){
+    if (!playerTurn) return;
 
+    const cell = enemyBoard[y][x];
 
-    if(!gameStarted){
-
-        return;
-
-    }
-
-
-
-    if(!playerTurn){
-
-        return;
-
-    }
-
-
-
-    let cell =
-    enemyBoard[y][x];
-
-
-
-    if(cell.hit){
-
+    if (cell.hit) {
 
         showMessage(
-            "Вы уже стреляли сюда"
+            "Вы уже стреляли сюда."
         );
-
 
         return;
 
     }
 
+    cell.hit = true;
 
+    drawBoards();
 
-    cell.hit=true;
+    if (cell.ship) {
 
+        showMessage("Попадание!");
 
-
-    if(cell.ship){
-
-
-        showMessage(
-            "Попадание! Ещё выстрел"
-        );
-
-
-        drawBoards();
-
-
-
-        if(checkWin(enemyBoard)){
-
+        if (checkWin(enemyBoard)) {
 
             endGame(true);
 
+            return;
 
         }
 
+    } else {
 
-    }else{
+        showMessage("Промах.");
 
-
-        showMessage(
-            "Промах"
-        );
-
-
-        playerTurn=false;
-
-
-        drawBoards();
-
-
+        playerTurn = false;
 
         setTimeout(
             enemyShoot,
-            800
+            700
         );
 
-
     }
-
 
 }
 
+/* ---------- Выстрел компьютера ---------- */
 
-
-
-/* Ход компьютера */
-
-function enemyShoot(){
-
-
+function enemyShoot() {
 
     let x;
-
     let y;
 
+    do {
 
-
-    do{
-
-
-        x=
-        Math.floor(
-            Math.random()*SIZE
+        x = Math.floor(
+            Math.random() * SIZE
         );
 
-
-        y=
-        Math.floor(
-            Math.random()*SIZE
+        y = Math.floor(
+            Math.random() * SIZE
         );
-
 
     }
-    while(
+    while (
         playerBoard[y][x].hit
     );
 
+    playerBoard[y][x].hit = true;
 
+    drawBoards();
 
-
-    let cell =
-    playerBoard[y][x];
-
-
-
-    cell.hit=true;
-
-
-
-    if(cell.ship){
-
+    if (
+        playerBoard[y][x].ship
+    ) {
 
         showMessage(
             "Компьютер попал!"
         );
 
-
-
-        if(
+        if (
             checkWin(playerBoard)
-        ){
+        ) {
 
             endGame(false);
 
@@ -826,332 +571,221 @@ function enemyShoot(){
 
         }
 
-
-
         setTimeout(
             enemyShoot,
             700
         );
 
+    } else {
 
-    }else{
-
-
-        playerTurn=true;
-
+        playerTurn = true;
 
         showMessage(
-            "Компьютер промахнулся. Ваш ход"
+            "Ваш ход."
         );
-
 
     }
 
-
-
-    drawBoards();
-
-
 }
 
+/* ---------- Проверка победы ---------- */
 
+function checkWin(board) {
 
+    for (let y = 0; y < SIZE; y++) {
 
-/* Проверка победы */
+        for (let x = 0; x < SIZE; x++) {
 
-function checkWin(board){
-
-
-
-    for(let y=0;y<SIZE;y++){
-
-
-        for(let x=0;x<SIZE;x++){
-
-
-
-            if(
+            if (
                 board[y][x].ship &&
                 !board[y][x].hit
-            ){
+            ) {
 
                 return false;
 
             }
 
-
         }
 
     }
-
 
     return true;
 
 }
 
+/* ---------- Завершение игры ---------- */
 
+function endGame(win) {
 
+    gameStarted = false;
 
-/* Завершение игры */
+    const result =
+        document.getElementById(
+            "result-screen"
+        );
 
-function endGame(win){
+    const title =
+        document.getElementById(
+            "result-title"
+        );
 
+    if (win) {
 
-    gameStarted=false;
+        title.textContent =
+            "🏆 Победа";
 
-
-    let result =
-    document.getElementById(
-        "result-screen"
-    );
-
-
-    let title =
-    document.getElementById(
-        "result-title"
-    );
-
-
-
-    if(win){
-
-
-        title.innerHTML=
-        "🏆 ПОБЕДА";
-
-
-        title.className=
-        "win-title";
-
+        title.className =
+            "result-title win-title";
 
         saveResult(true);
 
+    } else {
 
+        title.textContent =
+            "💥 Поражение";
 
-    }else{
-
-
-        title.innerHTML=
-        "💥 ПОРАЖЕНИЕ";
-
-
-        title.className=
-        "lose-title";
-
+        title.className =
+            "result-title lose-title";
 
         saveResult(false);
 
-
     }
 
+    if (result) {
 
-
-    if(result){
-
-        result.style.display="flex";
+        result.style.display = "flex";
 
     }
-
-
-}
-
-
-
-/* Сохранение статистики */
-
-function saveResult(win){
-
-
-    let stats =
-    JSON.parse(
-        localStorage.getItem(
-            "fleetStats"
-        )
-    )
-    ||
-    {
-        wins:0,
-        loses:0
-    };
-
-
-
-    if(win){
-
-        stats.wins++;
-
-    }else{
-
-        stats.loses++;
-
-    }
-
-
-
-    localStorage.setItem(
-        "fleetStats",
-        JSON.stringify(stats)
-    );
-
 
 }
 /* =====================================
    FLEET COMMANDER
-   Часть 4/4
+   script.js
+   Часть 4 (финал)
 ===================================== */
 
+/* ---------- Начать бой ---------- */
 
-/* Начать бой */
+function startBattle() {
 
-function startBattle(){
+    const ready = SHIPS.every(ship => ship.placed);
 
+    if (!ready) {
 
-    if(
-        !playerBoard
-    ){
+        alert("Сначала расставьте все корабли!");
 
         return;
 
     }
 
+    enemyBoard = createBoard();
 
+    placeAllShips(enemyBoard);
 
-    gameStarted=true;
+    gameStarted = true;
 
+    playerTurn = true;
 
-    enemyBoard=createBoard();
-
-
-    placeAllShips(
-        enemyBoard
-    );
-
-
-    playerTurn=true;
-
-
-    showScreen(
-        "game-screen"
-    );
-
+    showScreen("game-screen");
 
     drawBoards();
 
-
-    showMessage(
-        "Ваш ход"
-    );
-
+    showMessage("Ваш ход.");
 
 }
 
+/* ---------- Возврат в меню ---------- */
 
+function returnToMenu() {
 
-/* Возврат в меню */
+    const result =
+        document.getElementById("result-screen");
 
-function returnToMenu(){
+    if (result) {
 
-
-    let result =
-    document.getElementById(
-        "result-screen"
-    );
-
-
-    if(result){
-
-        result.style.display="none";
+        result.style.display = "none";
 
     }
 
-
-
-    showScreen(
-        "menu-screen"
-    );
-
+    showScreen("menu-screen");
 
     loadStats();
 
-
 }
 
+/* ---------- Статистика ---------- */
 
+function loadStats() {
 
-/* Статистика */
+    const stats = JSON.parse(
 
-function loadStats(){
+        localStorage.getItem("fleetStats")
 
+    ) || {
 
-    let stats =
-    JSON.parse(
-        localStorage.getItem(
-            "fleetStats"
-        )
-    )
-    ||
-    {
-        wins:0,
-        loses:0
+        wins: 0,
+
+        loses: 0
+
     };
 
-
-
-    let wins =
-    document.getElementById(
-        "wins-count"
-    );
-
-
-    let loses =
-    document.getElementById(
-        "loses-count"
-    );
-
-
-
-    if(wins){
-
-        wins.innerText=
+    document.getElementById("wins-count").textContent =
         stats.wins;
 
-    }
-
-
-
-    if(loses){
-
-        loses.innerText=
+    document.getElementById("loses-count").textContent =
         stats.loses;
-
-    }
-
 
 }
 
+/* ---------- Сохранение результата ---------- */
 
+function saveResult(win) {
 
-/* Очистка статистики */
+    const stats = JSON.parse(
 
-function clearStats(){
+        localStorage.getItem("fleetStats")
 
+    ) || {
 
-    localStorage.removeItem(
-        "fleetStats"
+        wins: 0,
+
+        loses: 0
+
+    };
+
+    if (win) {
+
+        stats.wins++;
+
+    } else {
+
+        stats.loses++;
+
+    }
+
+    localStorage.setItem(
+
+        "fleetStats",
+
+        JSON.stringify(stats)
+
     );
 
+}
+
+/* ---------- Очистка статистики ---------- */
+
+function clearStats() {
+
+    localStorage.removeItem("fleetStats");
 
     loadStats();
 
-
 }
 
+/* ---------- Сохранение ---------- */
 
-
-/* Сохранение игры */
-
-function saveGame(){
-
+function saveGame() {
 
     localStorage.setItem(
 
@@ -1171,197 +805,135 @@ function saveGame(){
 
     );
 
+}
+
+/* ---------- Загрузка ---------- */
+
+function loadGame() {
+
+    const save =
+
+        localStorage.getItem("fleetSave");
+
+    if (!save) return;
+
+    const data = JSON.parse(save);
+
+    playerBoard = data.playerBoard;
+
+    enemyBoard = data.enemyBoard;
+
+    playerTurn = data.playerTurn;
+
+    gameStarted = data.gameStarted;
 
 }
 
+/* ---------- Автосохранение ---------- */
 
+setInterval(function () {
 
-/* Загрузка сохранения */
-
-function loadGame(){
-
-
-    let save =
-    localStorage.getItem(
-        "fleetSave"
-    );
-
-
-
-    if(!save){
-
-        return;
-
-    }
-
-
-
-    let data =
-    JSON.parse(save);
-
-
-
-    playerBoard =
-    data.playerBoard;
-
-
-
-    enemyBoard =
-    data.enemyBoard;
-
-
-
-    playerTurn =
-    data.playerTurn;
-
-
-
-    gameStarted =
-    data.gameStarted;
-
-
-
-}
-
-
-
-/* Автосохранение */
-
-setInterval(
-function(){
-
-
-    if(playerBoard){
+    if (gameStarted) {
 
         saveGame();
 
     }
 
+}, 5000);
 
-},
-5000);
+/* =====================================
+   Подключение ВСЕХ кнопок
+===================================== */
 
+function setupButtons() {
 
+    const btnNewGame =
+        document.getElementById("new-game");
 
-/* Подключение кнопок */
+    if (btnNewGame) {
 
-function setupButtons(){
+        btnNewGame.onclick = newGame;
 
+    }
 
+    const btnRandom =
+        document.getElementById("random-button");
 
-    let newGame =
-document.getElementById(
-    "new-game"
-);
+    if (btnRandom) {
 
-if(newGame){
+        btnRandom.onclick = randomPlayerShips;
 
-    newGame.onclick =
-    newGame;
+    }
+
+    const btnRotate =
+        document.getElementById("rotate-button");
+
+    if (btnRotate) {
+
+        btnRotate.onclick = rotateShip;
+
+    }
+
+    const btnBattle =
+        document.getElementById("start-battle");
+
+    if (btnBattle) {
+
+        btnBattle.onclick = startBattle;
+
+    }
+
+    const btnBack =
+        document.getElementById("back-menu");
+
+    if (btnBack) {
+
+        btnBack.onclick = returnToMenu;
+
+    }
+
+    const btnClear =
+        document.getElementById("clear-stats");
+
+    if (btnClear) {
+
+        btnClear.onclick = clearStats;
+
+    }
+
+    const btnStats =
+        document.getElementById("show-stats");
+
+    if (btnStats) {
+
+        btnStats.onclick = loadStats;
+
+    }
 
 }
 
-
-
-    let random =
-    document.getElementById(
-        "random-button"
-    );
-
-
-    if(random){
-
-        random.onclick =
-        randomPlayerShips;
-
-    }
-
-
-
-    let rotate =
-    document.getElementById(
-        "rotate-button"
-    );
-
-
-    if(rotate){
-
-        rotate.onclick =
-        rotateShip;
-
-    }
-
-
-
-    let battle =
-    document.getElementById(
-        "start-battle"
-    );
-
-
-    if(battle){
-
-        battle.onclick =
-        startBattle;
-
-    }
-
-
-
-    let back =
-    document.getElementById(
-        "back-menu"
-    );
-
-
-    if(back){
-
-        back.onclick =
-        returnToMenu;
-
-    }
-
-
-
-    let clear =
-    document.getElementById(
-        "clear-stats"
-    );
-
-
-    if(clear){
-
-        clear.onclick =
-        clearStats;
-
-    }
-
-
-}
-
-
-
-/* Запуск приложения */
+/* =====================================
+   Запуск игры
+===================================== */
 
 document.addEventListener(
-"DOMContentLoaded",
-function(){
 
+    "DOMContentLoaded",
 
-    setupButtons();
+    function () {
 
+        playerBoard = createBoard();
 
-    loadStats();
+        enemyBoard = createBoard();
 
+        setupButtons();
 
-    showScreen(
-        "menu-screen"
-    );
+        loadStats();
 
+        showScreen("menu-screen");
 
-    console.log(
-        "Fleet Commander запущен"
-    );
+        console.log("Fleet Commander запущен.");
 
+    }
 
-});
+);
