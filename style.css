@@ -1669,3 +1669,16 @@ button,
     }
 
 }
+button {
+    position: relative;
+    z-index: 50;
+    pointer-events: auto;
+}
+
+.screen {
+    pointer-events: auto;
+}
+
+.result-screen {
+    pointer-events: auto;
+}
