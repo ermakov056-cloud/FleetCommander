@@ -1,140 +1,328 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="UTF-8">
 
-<title>Fleet Commander Remastered</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<link rel="stylesheet" href="style.css">
+    <title>Fleet Commander</title>
+
+    <link rel="stylesheet" href="style.css">
 
 </head>
 
+
 <body>
 
-<div id="background"></div>
 
-<div id="app">
+<!-- Главное меню -->
 
-<header>
+<div id="menu-screen" class="screen main-screen">
 
-<div class="logo">
 
-⚓ Fleet Commander
+    <div class="menu-box">
 
-</div>
 
-<div class="version">
+        <div class="logo">
+            ⚓ Fleet Commander
+        </div>
 
-Remastered v0.1
 
-</div>
+        <div class="subtitle">
+            Морской бой нового поколения
+        </div>
 
-</header>
 
-<section id="profile">
 
-<div class="avatar">
+        <button id="new-game"
+                class="menu-button">
 
-👨‍✈️
+            Новая игра
 
-</div>
+        </button>
 
-<div class="info">
 
-<h2 id="playerName">
 
-Адмирал
+        <button id="show-stats"
+                class="menu-button">
 
-</h2>
+            Статистика
 
-<p>
+        </button>
 
-⭐ Уровень
-<span id="level">1</span>
 
-</p>
 
-<p>
+        <div class="info-text">
 
-💰 Кредиты
-<span id="money">500</span>
+            Победы:
+            <span id="wins-count">0</span>
 
-</p>
+            <br>
 
-<p>
+            Поражения:
+            <span id="loses-count">0</span>
 
-XP
-<span id="xp">0</span>
-/
-100
+        </div>
 
-</p>
 
-</div>
 
-</section>
+        <button id="clear-stats"
+                class="menu-button">
 
-<nav id="menu">
+            Очистить статистику
 
-<button id="btnCampaign">
+        </button>
 
-🗺 Кампания
 
-</button>
+    </div>
 
-<button id="btnPort">
-
-⚓ Порт
-
-</button>
-
-<button id="btnFleet">
-
-🚢 Флот
-
-</button>
-
-<button id="btnShop">
-
-🛒 Магазин
-
-</button>
-
-<button id="btnSettings">
-
-⚙ Настройки
-
-</button>
-
-</nav>
-
-<main id="screen">
-
-<h2>
-
-Добро пожаловать!
-
-</h2>
-
-<p>
-
-Добро пожаловать в Fleet Commander Remastered.
-
-</p>
-
-<p>
-
-Выберите раздел в меню.
-
-</p>
-
-</main>
 
 </div>
 
-<script src="Script.js"></script>
+
+
+
+
+<!-- Расстановка кораблей -->
+
+
+<div id="setup-screen"
+     class="screen setup-screen"
+     style="display:none;">
+
+
+
+    <h1 class="setup-title">
+        Расстановка флота
+    </h1>
+
+
+
+    <div id="player-board"
+         class="game-board">
+
+    </div>
+
+
+
+    <div class="ship-panel">
+
+
+        <div class="ship-card"
+             data-ship="0"
+             onclick="selectShip(0)">
+            4 палубы
+        </div>
+
+
+        <div class="ship-card"
+             data-ship="1"
+             onclick="selectShip(1)">
+            3 палубы
+        </div>
+
+
+        <div class="ship-card"
+             data-ship="2"
+             onclick="selectShip(2)">
+            3 палубы
+        </div>
+
+
+        <div class="ship-card"
+             data-ship="3"
+             onclick="selectShip(3)">
+            2 палубы
+        </div>
+
+
+        <div class="ship-card"
+             data-ship="4"
+             onclick="selectShip(4)">
+            2 палубы
+        </div>
+
+
+        <div class="ship-card"
+             data-ship="5"
+             onclick="selectShip(5)">
+            2 палубы
+        </div>
+
+
+        <div class="ship-card"
+             data-ship="6"
+             onclick="selectShip(6)">
+            1 палуба
+        </div>
+
+
+    </div>
+
+
+
+
+    <button id="rotate-button"
+            class="menu-button">
+
+        🔄 Повернуть
+
+    </button>
+
+
+
+    <button id="random-button"
+            class="menu-button random-button">
+
+        🎲 Случайно
+
+    </button>
+
+
+
+    <button id="start-battle"
+            class="menu-button start-button">
+
+        ⚔ Начать бой
+
+    </button>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- Экран боя -->
+
+
+<div id="game-screen"
+     class="screen combat-screen"
+     style="display:none;">
+
+
+
+    <div class="status-panel">
+
+
+        <div>
+            Вы
+        </div>
+
+
+        <div id="turn-indicator"
+             class="turn-indicator player-turn">
+
+            Ваш ход
+
+        </div>
+
+
+        <div>
+            ИИ
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <div id="enemy-board"
+         class="game-board">
+
+    </div>
+
+
+
+
+    <div id="game-message"
+         class="game-message">
+
+        Начало боя
+
+    </div>
+
+
+
+    <button id="back-menu"
+            class="menu-button">
+
+        В меню
+
+    </button>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- Экран результата -->
+
+
+<div id="result-screen"
+     class="result-screen"
+     style="display:none;">
+
+
+    <div class="result-box">
+
+
+        <div id="result-title"
+             class="result-title">
+
+        </div>
+
+
+
+        <div class="result-stat">
+
+            Спасибо за игру!
+
+        </div>
+
+
+
+        <button class="result-button new-game-button"
+                onclick="newGame()">
+
+            Новая игра
+
+        </button>
+
+
+
+        <button class="result-button menu-return-button"
+                onclick="returnToMenu()">
+
+            Главное меню
+
+        </button>
+
+
+    </div>
+
+
+</div>
+
+
+
+
+
+<script src="script.js"></script>
+
 
 </body>
+
 </html>
