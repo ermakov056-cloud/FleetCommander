@@ -995,3 +995,374 @@ function saveResult(win){
 
 
 }
+/* =====================================
+   FLEET COMMANDER
+   Часть 4/4
+===================================== */
+
+
+/* Начать бой */
+
+function startBattle(){
+
+
+    if(
+        !playerBoard
+    ){
+
+        return;
+
+    }
+
+
+
+    gameStarted=true;
+
+
+    enemyBoard=createBoard();
+
+
+    placeAllShips(
+        enemyBoard
+    );
+
+
+    playerTurn=true;
+
+
+    showScreen(
+        "game-screen"
+    );
+
+
+    drawBoards();
+
+
+    showMessage(
+        "Ваш ход"
+    );
+
+
+}
+
+
+
+/* Возврат в меню */
+
+function returnToMenu(){
+
+
+    let result =
+    document.getElementById(
+        "result-screen"
+    );
+
+
+    if(result){
+
+        result.style.display="none";
+
+    }
+
+
+
+    showScreen(
+        "menu-screen"
+    );
+
+
+    loadStats();
+
+
+}
+
+
+
+/* Статистика */
+
+function loadStats(){
+
+
+    let stats =
+    JSON.parse(
+        localStorage.getItem(
+            "fleetStats"
+        )
+    )
+    ||
+    {
+        wins:0,
+        loses:0
+    };
+
+
+
+    let wins =
+    document.getElementById(
+        "wins-count"
+    );
+
+
+    let loses =
+    document.getElementById(
+        "loses-count"
+    );
+
+
+
+    if(wins){
+
+        wins.innerText=
+        stats.wins;
+
+    }
+
+
+
+    if(loses){
+
+        loses.innerText=
+        stats.loses;
+
+    }
+
+
+}
+
+
+
+/* Очистка статистики */
+
+function clearStats(){
+
+
+    localStorage.removeItem(
+        "fleetStats"
+    );
+
+
+    loadStats();
+
+
+}
+
+
+
+/* Сохранение игры */
+
+function saveGame(){
+
+
+    localStorage.setItem(
+
+        "fleetSave",
+
+        JSON.stringify({
+
+            playerBoard,
+
+            enemyBoard,
+
+            playerTurn,
+
+            gameStarted
+
+        })
+
+    );
+
+
+}
+
+
+
+/* Загрузка сохранения */
+
+function loadGame(){
+
+
+    let save =
+    localStorage.getItem(
+        "fleetSave"
+    );
+
+
+
+    if(!save){
+
+        return;
+
+    }
+
+
+
+    let data =
+    JSON.parse(save);
+
+
+
+    playerBoard =
+    data.playerBoard;
+
+
+
+    enemyBoard =
+    data.enemyBoard;
+
+
+
+    playerTurn =
+    data.playerTurn;
+
+
+
+    gameStarted =
+    data.gameStarted;
+
+
+
+}
+
+
+
+/* Автосохранение */
+
+setInterval(
+function(){
+
+
+    if(playerBoard){
+
+        saveGame();
+
+    }
+
+
+},
+5000);
+
+
+
+/* Подключение кнопок */
+
+function setupButtons(){
+
+
+
+    let newGame =
+    document.getElementById(
+        "new-game"
+    );
+
+
+    if(newGame){
+
+        newGame.onclick =
+        newGame;
+
+    }
+
+
+
+    let random =
+    document.getElementById(
+        "random-button"
+    );
+
+
+    if(random){
+
+        random.onclick =
+        randomPlayerShips;
+
+    }
+
+
+
+    let rotate =
+    document.getElementById(
+        "rotate-button"
+    );
+
+
+    if(rotate){
+
+        rotate.onclick =
+        rotateShip;
+
+    }
+
+
+
+    let battle =
+    document.getElementById(
+        "start-battle"
+    );
+
+
+    if(battle){
+
+        battle.onclick =
+        startBattle;
+
+    }
+
+
+
+    let back =
+    document.getElementById(
+        "back-menu"
+    );
+
+
+    if(back){
+
+        back.onclick =
+        returnToMenu;
+
+    }
+
+
+
+    let clear =
+    document.getElementById(
+        "clear-stats"
+    );
+
+
+    if(clear){
+
+        clear.onclick =
+        clearStats;
+
+    }
+
+
+}
+
+
+
+/* Запуск приложения */
+
+document.addEventListener(
+"DOMContentLoaded",
+function(){
+
+
+    setupButtons();
+
+
+    loadStats();
+
+
+    showScreen(
+        "menu-screen"
+    );
+
+
+    console.log(
+        "Fleet Commander запущен"
+    );
+
+
+});
