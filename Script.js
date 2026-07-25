@@ -786,3 +786,202 @@ function saveGameResult(win) {
     );
 
 }
+/* ===== SCRIPT.JS ===== */
+/* ЧАСТЬ 4 */
+/* Меню и управление экранами */
+
+
+/*
+Показать экран
+*/
+
+function showScreen(screenId) {
+
+
+    const screens =
+    document.querySelectorAll(".screen");
+
+
+    screens.forEach(screen => {
+
+        screen.style.display = "none";
+
+    });
+
+
+
+    const screen =
+    document.getElementById(screenId);
+
+
+
+    if (screen) {
+
+        screen.style.display = "flex";
+
+    }
+
+}
+
+
+
+/*
+Начать новую игру
+*/
+
+function newGame() {
+
+
+    showScreen("game-screen");
+
+
+    startGame();
+
+
+}
+
+
+
+/*
+Вернуться в меню
+*/
+
+function returnToMenu() {
+
+
+    showScreen("menu-screen");
+
+
+}
+
+
+
+/*
+Загрузка статистики
+*/
+
+function loadStats() {
+
+
+    let stats =
+    JSON.parse(
+        localStorage.getItem(
+            "fleetStats"
+        )
+    ) || {
+
+        wins:0,
+
+        loses:0
+
+    };
+
+
+
+    const wins =
+    document.getElementById(
+        "wins-count"
+    );
+
+
+    const loses =
+    document.getElementById(
+        "loses-count"
+    );
+
+
+
+    if (wins) {
+
+        wins.innerText =
+        stats.wins;
+
+    }
+
+
+
+    if (loses) {
+
+        loses.innerText =
+        stats.loses;
+
+    }
+
+
+}
+
+
+
+/*
+Очистка статистики
+*/
+
+function clearStats() {
+
+
+    localStorage.removeItem(
+        "fleetStats"
+    );
+
+
+    loadStats();
+
+
+    showMessage(
+        "Статистика очищена"
+    );
+
+}
+
+
+
+/*
+Загрузка игры после открытия страницы
+*/
+
+window.onload = function() {
+
+
+    showScreen(
+        "menu-screen"
+    );
+
+
+    loadStats();
+
+
+    const start =
+    document.getElementById(
+        "start-button"
+    );
+
+
+    if (start) {
+
+
+        start.onclick =
+        newGame;
+
+
+    }
+
+
+
+    const menu =
+    document.getElementById(
+        "menu-button"
+    );
+
+
+    if (menu) {
+
+
+        menu.onclick =
+        returnToMenu;
+
+
+    }
+
+
+
+};
