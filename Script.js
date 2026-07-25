@@ -1,358 +1,233 @@
-// ===============================
-// Fleet Commander Remastered 0.1
-// ===============================
+/* ===== SCRIPT.JS ===== */
+/* ЧАСТЬ 1 */
+/* Создание игры и игрового поля */
 
-const game = {
-    player: {
-        name: "Адмирал",
-        level: 1,
-        xp: 0,
-        money: 500,
-        rank: "Капитан"
-    },
 
-    fleet: [
-        {
-            id: 1,
-            name: "Эсминец",
-            hp: 100,
-            armor: 1,
-            guns: 1
+// Размер поля
+const BOARD_SIZE = 10;
+
+
+// Корабли
+const SHIPS = [
+    { name: "4 палубы", size: 4 },
+    { name: "3 палубы", size: 3 },
+    { name: "3 палубы", size: 3 },
+    { name: "2 палубы", size: 2 },
+    { name: "2 палубы", size: 2 },
+    { name: "2 палубы", size: 2 },
+    { name: "1 палуба", size: 1 },
+    { name: "1 палуба", size: 1 },
+    { name: "1 палуба", size: 1 },
+    { name: "1 палуба", size: 1 }
+];
+
+
+// Игровые поля
+
+let playerBoard = [];
+
+let enemyBoard = [];
+
+
+// Очки
+
+let playerHits = 0;
+
+let enemyHits = 0;
+
+
+// Текущий ход
+
+let playerTurn = true;
+
+
+
+/*
+Создание пустого поля
+*/
+
+function createEmptyBoard() {
+
+    let board = [];
+
+    for (let y = 0; y < BOARD_SIZE; y++) {
+
+        board[y] = [];
+
+        for (let x = 0; x < BOARD_SIZE; x++) {
+
+            board[y][x] = {
+
+                ship: false,
+
+                hit: false
+
+            };
+
         }
-    ],
 
-    currentScreen: "menu"
-};
+    }
 
-// ------------------------------
-
-window.onload = () => {
-
-    loadGame();
-
-    updateProfile();
-
-};
-
-// ------------------------------
-
-function updateProfile(){
-
-    document.getElementById("playerName").textContent =
-        game.player.name;
-
-    document.getElementById("level").textContent =
-        game.player.level;
-
-    document.getElementById("xp").textContent =
-        game.player.xp;
-
-    document.getElementById("money").textContent =
-        game.player.money;
+    return board;
 
 }
 
-// ------------------------------
 
-function newGame(){
 
-    showMessage(
-        "⚓ Добро пожаловать в Fleet Commander Remastered!"
-    );
+/*
+Запуск игры
+*/
 
-}
+function startGame() {
 
-// ------------------------------
+    playerBoard = createEmptyBoard();
 
-function continueGame(){
+    enemyBoard = createEmptyBoard();
 
-    showMessage(
-        "📂 Загрузка сохранения..."
-    );
 
-}
+    placeAllShips(playerBoard);
 
-// ------------------------------
+    placeAllShips(enemyBoard);
 
-function openCampaign(){
 
-    openScreen(`
-    <div class="panel">
+    playerHits = 0;
 
-        <div class="title">
-            🗺 Карта кампании
-        </div>
+    enemyHits = 0;
 
-        <div id="worldMap">
 
-            <div class="mission unlocked"
-                 onclick="startMission(1)"
-                 style="left:80px;top:250px;">
-                 ⚓
-                 <span>Порт</span>
-            </div>
+    playerTurn = true;
 
-            <div class="line"
-                 style="left:120px;top:270px;width:120px;">
-            </div>
 
-            <div class="mission unlocked"
-                 onclick="startMission(2)"
-                 style="left:260px;top:220px;">
-                 🏝
-                 <span>Остров</span>
-            </div>
+    drawBoards();
 
-            <div class="line"
-                 style="left:300px;top:240px;width:140px;">
-            </div>
 
-            <div class="mission locked"
-                 style="left:470px;top:170px;">
-                 ☠
-                 <span>Пираты</span>
-            </div>
-
-            <div class="line"
-                 style="left:500px;top:190px;width:120px;">
-            </div>
-
-            <div class="mission locked"
-                 style="left:650px;top:120px;">
-                 🌋
-                 <span>Босс</span>
-            </div>
-
-        </div>
-
-    </div>
-    `);
+    showMessage("Ваш ход");
 
 }
 
-// ------------------------------
 
-function openPort(){
 
-    openScreen(`
-        <div class="panel">
+/*
+Создание поля на экране
+*/
 
-            <div class="title">
+function createBoardHTML(containerId, board, enemy = false) {
 
-                ⚓ Порт
 
-            </div>
+    const container = document.getElementById(containerId);
 
-            <button onclick="showShipyard()">
 
-                🚢 Верфь
+    if (!container) return;
 
-            </button>
 
-            <button onclick="repairFleet()">
+    container.innerHTML = "";
 
-                🔧 Док
 
-            </button>
+    for (let y = 0; y < BOARD_SIZE; y++) {
 
-            <button onclick="upgradeFleet()">
 
-                ⬆ Улучшения
+        for (let x = 0; x < BOARD_SIZE; x++) {
 
-            </button>
 
-        </div>
-    `);
+            let cell = document.createElement("div");
 
-}
 
-// ------------------------------
+            cell.className = "cell";
 
-function openFleet(){
 
-    let html = `
-    <div class="panel">
+            cell.dataset.x = x;
 
-    <div class="title">
+            cell.dataset.y = y;
 
-    🚢 Мой флот
 
-    </div>
-    `;
 
-    game.fleet.forEach(ship=>{
+            if (board[y][x].ship && !enemy) {
 
-        html += `
-        <p>
+                cell.classList.add("ship-part");
 
-        ${ship.name}
+            }
 
-        <br>
 
-        ❤️ HP: ${ship.hp}
 
-        <br>
+            if (board[y][x].hit) {
 
-        🛡 Броня: ${ship.armor}
 
-        <br>
+                if (board[y][x].ship) {
 
-        💣 Орудия: ${ship.guns}
+                    cell.classList.add("hit");
 
-        </p>
+                } else {
 
-        <hr><br>
-        `;
+                    cell.classList.add("miss");
 
-    });
+                }
 
-    html += "</div>";
+            }
 
-    openScreen(html);
 
-}
 
-// ------------------------------
+            if (enemy) {
 
-function openSettings(){
 
-    openScreen(`
-        <div class="panel">
+                cell.onclick = function() {
 
-            <div class="title">
+                    playerShoot(x, y);
 
-                ⚙ Настройки
+                };
 
-            </div>
 
-            <button onclick="resetProgress()">
+            }
 
-                🗑 Сбросить прогресс
 
-            </button>
+            container.appendChild(cell);
 
-        </div>
-    `);
 
-}
-
-// ------------------------------
-
-function openScreen(html){
-
-    const screen =
-        document.getElementById("screen");
-
-    screen.style.display="block";
-
-    screen.innerHTML = html;
-
-}
-
-// ------------------------------
-
-function showMessage(text){
-
-    alert(text);
-
-}
-
-// ------------------------------
-
-function startMission(id){
-
-    alert("Миссия "+id+" скоро станет доступна.");
-
-}
-
-// ------------------------------
-
-function showShipyard(){
-
-    alert("Верфь появится в версии 0.2");
-
-}
-
-function repairFleet(){
-
-    alert("Все корабли отремонтированы.");
-
-}
-
-function upgradeFleet(){
-
-    alert("Система улучшений скоро появится.");
-
-}
-
-// ------------------------------
-
-function saveGame(){
-
-    localStorage.setItem(
-
-        "fleetCommander",
-
-        JSON.stringify(game)
-
-    );
-
-}
-
-// ------------------------------
-
-function loadGame(){
-
-    const data =
-        localStorage.getItem(
-            "fleetCommander"
-        );
-
-    if(data){
-
-        Object.assign(
-            game,
-            JSON.parse(data)
-        );
+        }
 
     }
 
 }
 
-// ------------------------------
 
-function resetProgress(){
 
-    if(confirm("Удалить сохранение?")){
+/*
+Отрисовка полей
+*/
 
-        localStorage.removeItem(
-            "fleetCommander"
-        );
+function drawBoards() {
 
-        location.reload();
 
-    }
+    createBoardHTML(
+        "player-board",
+        playerBoard,
+        false
+    );
+
+
+    createBoardHTML(
+        "enemy-board",
+        enemyBoard,
+        true
+    );
 
 }
-function startMission(id){
 
-    switch(id){
 
-        case 1:
 
-            alert("⚓ Миссия 1\n\nЗащитите главный порт.");
+/*
+Сообщения игроку
+*/
 
-        break;
+function showMessage(text) {
 
-        case 2:
 
-            alert("🏝 Миссия 2\n\nОсвободите остров.");
+    const message =
+    document.getElementById("game-message");
 
-        break;
 
-        default:
+    if (message) {
 
-            alert("Миссия пока недоступна.");
+        message.innerText = text;
 
     }
 
