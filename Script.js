@@ -77,29 +77,55 @@ function continueGame(){
 function openCampaign(){
 
     openScreen(`
-        <div class="panel">
+    <div class="panel">
 
-            <div class="title">
+        <div class="title">
+            🗺 Карта кампании
+        </div>
 
-                🗺 Кампания
+        <div id="worldMap">
 
+            <div class="mission unlocked"
+                 onclick="startMission(1)"
+                 style="left:80px;top:250px;">
+                 ⚓
+                 <span>Порт</span>
             </div>
 
-            <p>
+            <div class="line"
+                 style="left:120px;top:270px;width:120px;">
+            </div>
 
-            Скоро здесь появится карта мира.
+            <div class="mission unlocked"
+                 onclick="startMission(2)"
+                 style="left:260px;top:220px;">
+                 🏝
+                 <span>Остров</span>
+            </div>
 
-            </p>
+            <div class="line"
+                 style="left:300px;top:240px;width:140px;">
+            </div>
 
-            <br>
+            <div class="mission locked"
+                 style="left:470px;top:170px;">
+                 ☠
+                 <span>Пираты</span>
+            </div>
 
-            <button onclick="startMission(1)">
+            <div class="line"
+                 style="left:500px;top:190px;width:120px;">
+            </div>
 
-                Миссия 1
-
-            </button>
+            <div class="mission locked"
+                 style="left:650px;top:120px;">
+                 🌋
+                 <span>Босс</span>
+            </div>
 
         </div>
+
+    </div>
     `);
 
 }
