@@ -462,3 +462,327 @@ function checkWin(board) {
     return true;
 
 }
+/* ===== SCRIPT.JS ===== */
+/* ЧАСТЬ 3 */
+/* Стрельба и логика боя */
+
+
+/*
+Выстрел игрока
+*/
+
+function playerShoot(x, y) {
+
+
+    // Проверка хода
+
+    if (!playerTurn) {
+
+        return;
+
+    }
+
+
+
+    let cell = enemyBoard[y][x];
+
+
+
+    // Нельзя стрелять повторно
+
+    if (cell.hit) {
+
+        showMessage("Вы уже стреляли сюда");
+
+        return;
+
+    }
+
+
+
+    cell.hit = true;
+
+
+
+    if (cell.ship) {
+
+
+        playerHits++;
+
+
+        showMessage("Попадание! Стреляйте ещё");
+
+
+        animateShot(
+            "enemy-board",
+            x,
+            y
+        );
+
+
+
+        if (checkWin(enemyBoard)) {
+
+
+            endGame(true);
+
+
+            return;
+
+        }
+
+
+
+    } else {
+
+
+        showMessage("Промах");
+
+
+        playerTurn = false;
+
+
+        setTimeout(
+            enemyShoot,
+            1000
+        );
+
+
+    }
+
+
+
+    drawBoards();
+
+}
+
+
+
+
+/*
+Ход компьютера
+*/
+
+function enemyShoot() {
+
+
+    let x;
+
+    let y;
+
+
+
+    do {
+
+
+        x = Math.floor(
+            Math.random() * BOARD_SIZE
+        );
+
+
+        y = Math.floor(
+            Math.random() * BOARD_SIZE
+        );
+
+
+
+    } while (
+        playerBoard[y][x].hit
+    );
+
+
+
+    let cell =
+    playerBoard[y][x];
+
+
+
+    cell.hit = true;
+
+
+
+    if (cell.ship) {
+
+
+        enemyHits++;
+
+
+        showMessage(
+            "Компьютер попал!"
+        );
+
+
+
+        if (
+            checkWin(playerBoard)
+        ) {
+
+
+            endGame(false);
+
+
+            return;
+
+        }
+
+
+
+        setTimeout(
+            enemyShoot,
+            800
+        );
+
+
+
+    } else {
+
+
+        showMessage(
+            "Компьютер промахнулся. Ваш ход"
+        );
+
+
+        playerTurn = true;
+
+
+    }
+
+
+
+    drawBoards();
+
+
+}
+
+
+
+
+/*
+Анимация выстрела
+*/
+
+function animateShot(
+    boardId,
+    x,
+    y
+) {
+
+
+    const board =
+    document.getElementById(boardId);
+
+
+
+    if (!board) return;
+
+
+
+    let index =
+    y * BOARD_SIZE + x;
+
+
+
+    let cell =
+    board.children[index];
+
+
+
+    if (cell) {
+
+
+        cell.classList.add(
+            "shot"
+        );
+
+
+        setTimeout(() => {
+
+            cell.classList.remove(
+                "shot"
+            );
+
+        },400);
+
+
+    }
+
+}
+
+
+
+
+/*
+Конец игры
+*/
+
+function endGame(playerWin) {
+
+
+    if (playerWin) {
+
+
+        showMessage(
+            "🎉 Вы победили!"
+        );
+
+
+    } else {
+
+
+        showMessage(
+            "💥 Компьютер победил"
+        );
+
+
+    }
+
+
+    playerTurn = false;
+
+
+    saveGameResult(playerWin);
+
+}
+
+
+
+/*
+Сохранение результата
+*/
+
+function saveGameResult(win) {
+
+
+    let stats =
+    JSON.parse(
+        localStorage.getItem(
+            "fleetStats"
+        )
+    ) || {
+
+        wins:0,
+
+        loses:0
+
+    };
+
+
+
+    if (win) {
+
+        stats.wins++;
+
+    } else {
+
+        stats.loses++;
+
+    }
+
+
+
+    localStorage.setItem(
+        "fleetStats",
+        JSON.stringify(stats)
+    );
+
+}
