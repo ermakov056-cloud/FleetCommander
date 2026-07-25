@@ -896,3 +896,243 @@ body {
     }
 
 }
+/* ===== ЧАСТЬ 5 ===== */
+/* Экран расстановки кораблей */
+
+
+/* Экран подготовки */
+.setup-screen {
+
+    width:100%;
+
+    min-height:100vh;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:15px;
+
+    padding:15px;
+
+}
+
+
+/* Заголовок подготовки */
+.setup-title {
+
+    font-size:clamp(25px,7vw,40px);
+
+    text-align:center;
+
+}
+
+
+/* Панель кораблей */
+.ship-panel {
+
+    width:100%;
+
+    max-width:450px;
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    justify-content:center;
+
+    gap:10px;
+
+    padding:15px;
+
+    border-radius:15px;
+
+    background:rgba(255,255,255,0.08);
+
+}
+
+
+/* Карточка корабля */
+.ship-card {
+
+    width:70px;
+
+    height:45px;
+
+    border-radius:8px;
+
+    background:#37474f;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:14px;
+
+    cursor:pointer;
+
+    user-select:none;
+
+}
+
+
+/* Выбранный корабль */
+.ship-card.selected {
+
+    background:#008cff;
+
+    box-shadow:
+        0 0 15px #008cff;
+
+}
+
+
+/* Горизонтальный корабль */
+.ship-horizontal {
+
+    display:flex;
+
+    flex-direction:row;
+
+}
+
+
+/* Вертикальный корабль */
+.ship-vertical {
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+/* Подсветка куда можно поставить */
+.cell.valid {
+
+    background:#2e7d32;
+
+}
+
+
+/* Ошибка размещения */
+.cell.invalid {
+
+    background:#b71c1c;
+
+}
+
+
+/* Корабль во время перемещения */
+.dragging {
+
+    opacity:0.6;
+
+    transform:scale(1.05);
+
+}
+
+
+/* Кнопка начала игры */
+.start-button {
+
+    width:90%;
+
+    max-width:400px;
+
+    min-height:60px;
+
+    font-size:20px;
+
+    background:
+
+    linear-gradient(135deg,#00c853,#009624);
+
+}
+
+
+/* Кнопка случайной расстановки */
+.random-button {
+
+    background:
+
+    linear-gradient(135deg,#ff9800,#f57c00);
+
+}
+
+
+/* Информация */
+.info-text {
+
+    width:90%;
+
+    max-width:450px;
+
+    padding:12px;
+
+    text-align:center;
+
+    border-radius:10px;
+
+    background:rgba(255,255,255,0.1);
+
+    font-size:16px;
+
+}
+
+
+/* Планшеты */
+@media(min-width:700px){
+
+    .setup-screen {
+
+        flex-direction:row;
+
+        flex-wrap:wrap;
+
+    }
+
+
+    .ship-panel {
+
+        max-width:250px;
+
+    }
+
+}
+
+
+/* Маленькие экраны */
+@media(max-height:650px){
+
+    .setup-screen {
+
+        justify-content:flex-start;
+
+        padding-top:10px;
+
+    }
+
+
+    .ship-panel {
+
+        padding:8px;
+
+    }
+
+
+    .ship-card {
+
+        height:35px;
+
+        width:60px;
+
+    }
+
+}
