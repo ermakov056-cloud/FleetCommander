@@ -1,273 +1,310 @@
-// Fleet Commander 2.0
-// Часть 1
+// ===============================
+// Fleet Commander Remastered 0.1
+// ===============================
 
-const SIZE = 10;
+const game = {
+    player: {
+        name: "Адмирал",
+        level: 1,
+        xp: 0,
+        money: 500,
+        rank: "Капитан"
+    },
 
-const SHIPS = [4,3,3,2,2,2,1,1,1,1];
-
-let gameStarted = false;
-let playerTurn = true;
-let playerShots = [];
-let enemyShots = [];
-
-const playerBoard=document.getElementById("playerBoard");
-const enemyBoard=document.getElementById("enemyBoard");
-const status=document.getElementById("status");
-
-let player=[];
-let enemy=[];
-
-function createField(){
-
-    const field=[];
-
-    for(let y=0;y<SIZE;y++){
-
-        field[y]=[];
-
-        for(let x=0;x<SIZE;x++)
-            field[y][x]=0;
-
-    }
-
-    return field;
-
-}
-
-function inside(x,y){
-
-    return x>=0 && y>=0 && x<SIZE && y<SIZE;
-
-}
-
-function canPlace(field,x,y,length,horizontal){
-
-    for(let i=0;i<length;i++){
-
-        const xx=horizontal?x+i:x;
-        const yy=horizontal?y:y+i;
-
-        if(!inside(xx,yy))
-            return false;
-
-        for(let dy=-1;dy<=1;dy++){
-
-            for(let dx=-1;dx<=1;dx++){
-
-                const nx=xx+dx;
-                const ny=yy+dy;
-
-                if(inside(nx,ny) && field[ny][nx]==1)
-                    return false;
-
-            }
-
+    fleet: [
+        {
+            id: 1,
+            name: "Эсминец",
+            hp: 100,
+            armor: 1,
+            guns: 1
         }
+    ],
 
-    }
+    currentScreen: "menu"
+};
 
-    return true;
+// ------------------------------
 
-}
+window.onload = () => {
 
-function placeShip(field,length){
+    loadGame();
 
-    while(true){
-
-        const horizontal=Math.random()<0.5;
-
-        const x=Math.floor(Math.random()*SIZE);
-
-        const y=Math.floor(Math.random()*SIZE);
-
-        if(!canPlace(field,x,y,length,horizontal))
-            continue;
-
-        for(let i=0;i<length;i++){
-
-            if(horizontal)
-                field[y][x+i]=1;
-            else
-                field[y+i][x]=1;
-
-        }
-
-        return;
-
-    }
-
-}
-
-function randomFleet(field){
-
-    for(let y=0;y<SIZE;y++)
-        for(let x=0;x<SIZE;x++)
-            field[y][x]=0;
-
-    SHIPS.forEach(ship=>placeShip(field,ship));
-
-}
-function drawBoards(){
-
-    playerBoard.innerHTML="";
-    enemyBoard.innerHTML="";
-
-    for(let y=0;y<SIZE;y++){
-
-        for(let x=0;x<SIZE;x++){
-
-            const p=document.createElement("div");
-            p.className="cell";
-
-            if(player[y][x]==1)
-                p.classList.add("ship");
-
-            if(enemyShots[y][x]==1)
-                p.classList.add("miss");
-
-            if(enemyShots[y][x]==2)
-                p.classList.add("hit");
-
-            playerBoard.appendChild(p);
-
-            const e=document.createElement("div");
-            e.className="cell";
-
-            if(playerShots[y][x]==1)
-                e.classList.add("miss");
-
-            if(playerShots[y][x]==2)
-                e.classList.add("hit");
-
-            e.onclick=function(){
-
-                if(!gameStarted) return;
-
-                if(!playerTurn) return;
-
-                if(playerShots[y][x]!=0) return;
-
-                if(enemy[y][x]==1){
-
-                    playerShots[y][x]=2;
-
-                    status.innerHTML="💥 Попадание!";
-
-                }else{
-
-                    playerShots[y][x]=1;
-
-                    status.innerHTML="🌊 Мимо";
-
-                    playerTurn=false;
-
-                    setTimeout(enemyMove,700);
-
-                }
-
-                drawBoards();
-
-            };
-
-            enemyBoard.appendChild(e);
-
-        }
-
-    }
-
-}
-function newGame() {
-
-    player = createField();
-    enemy = createField();
-    playerShots=createShotField();
-enemyShots=createShotField();
-
-    randomFleet(player);
-    randomFleet(enemy);
-
-    gameStarted = false;
-    playerTurn = true;
-
-    drawBoards();
-
-    status.innerHTML =
-        "Нажмите «Начать бой»";
-
-}
-
-document
-.getElementById("newGame")
-.onclick = newGame;
-
-document
-.getElementById("autoPlace")
-.onclick = function(){
-
-    randomFleet(player);
-
-    drawBoards();
-
-    status.innerHTML =
-        "Флот расставлен";
+    updateProfile();
 
 };
 
-newGame();
-function createShotField(){
+// ------------------------------
 
-    const arr=[];
+function updateProfile(){
 
-    for(let y=0;y<SIZE;y++){
+    document.getElementById("playerName").textContent =
+        game.player.name;
 
-        arr[y]=[];
+    document.getElementById("level").textContent =
+        game.player.level;
 
-        for(let x=0;x<SIZE;x++)
-            arr[y][x]=0;
+    document.getElementById("xp").textContent =
+        game.player.xp;
+
+    document.getElementById("money").textContent =
+        game.player.money;
+
+}
+
+// ------------------------------
+
+function newGame(){
+
+    showMessage(
+        "⚓ Добро пожаловать в Fleet Commander Remastered!"
+    );
+
+}
+
+// ------------------------------
+
+function continueGame(){
+
+    showMessage(
+        "📂 Загрузка сохранения..."
+    );
+
+}
+
+// ------------------------------
+
+function openCampaign(){
+
+    openScreen(`
+        <div class="panel">
+
+            <div class="title">
+
+                🗺 Кампания
+
+            </div>
+
+            <p>
+
+            Скоро здесь появится карта мира.
+
+            </p>
+
+            <br>
+
+            <button onclick="startMission(1)">
+
+                Миссия 1
+
+            </button>
+
+        </div>
+    `);
+
+}
+
+// ------------------------------
+
+function openPort(){
+
+    openScreen(`
+        <div class="panel">
+
+            <div class="title">
+
+                ⚓ Порт
+
+            </div>
+
+            <button onclick="showShipyard()">
+
+                🚢 Верфь
+
+            </button>
+
+            <button onclick="repairFleet()">
+
+                🔧 Док
+
+            </button>
+
+            <button onclick="upgradeFleet()">
+
+                ⬆ Улучшения
+
+            </button>
+
+        </div>
+    `);
+
+}
+
+// ------------------------------
+
+function openFleet(){
+
+    let html = `
+    <div class="panel">
+
+    <div class="title">
+
+    🚢 Мой флот
+
+    </div>
+    `;
+
+    game.fleet.forEach(ship=>{
+
+        html += `
+        <p>
+
+        ${ship.name}
+
+        <br>
+
+        ❤️ HP: ${ship.hp}
+
+        <br>
+
+        🛡 Броня: ${ship.armor}
+
+        <br>
+
+        💣 Орудия: ${ship.guns}
+
+        </p>
+
+        <hr><br>
+        `;
+
+    });
+
+    html += "</div>";
+
+    openScreen(html);
+
+}
+
+// ------------------------------
+
+function openSettings(){
+
+    openScreen(`
+        <div class="panel">
+
+            <div class="title">
+
+                ⚙ Настройки
+
+            </div>
+
+            <button onclick="resetProgress()">
+
+                🗑 Сбросить прогресс
+
+            </button>
+
+        </div>
+    `);
+
+}
+
+// ------------------------------
+
+function openScreen(html){
+
+    const screen =
+        document.getElementById("screen");
+
+    screen.style.display="block";
+
+    screen.innerHTML = html;
+
+}
+
+// ------------------------------
+
+function showMessage(text){
+
+    alert(text);
+
+}
+
+// ------------------------------
+
+function startMission(id){
+
+    alert("Миссия "+id+" скоро станет доступна.");
+
+}
+
+// ------------------------------
+
+function showShipyard(){
+
+    alert("Верфь появится в версии 0.2");
+
+}
+
+function repairFleet(){
+
+    alert("Все корабли отремонтированы.");
+
+}
+
+function upgradeFleet(){
+
+    alert("Система улучшений скоро появится.");
+
+}
+
+// ------------------------------
+
+function saveGame(){
+
+    localStorage.setItem(
+
+        "fleetCommander",
+
+        JSON.stringify(game)
+
+    );
+
+}
+
+// ------------------------------
+
+function loadGame(){
+
+    const data =
+        localStorage.getItem(
+            "fleetCommander"
+        );
+
+    if(data){
+
+        Object.assign(
+            game,
+            JSON.parse(data)
+        );
 
     }
 
-    return arr;
-
 }
-function enemyMove(){
 
-    while(true){
+// ------------------------------
 
-        const x=Math.floor(Math.random()*SIZE);
-        const y=Math.floor(Math.random()*SIZE);
+function resetProgress(){
 
-        if(enemyShots[y][x]!=0)
-            continue;
+    if(confirm("Удалить сохранение?")){
 
-        if(player[y][x]==1){
+        localStorage.removeItem(
+            "fleetCommander"
+        );
 
-            enemyShots[y][x]=2;
-            status.innerHTML="💥 Компьютер попал!";
-
-        }else{
-
-            enemyShots[y][x]=1;
-            playerTurn=true;
-            status.innerHTML="Ваш ход";
-
-        }
-
-        break;
+        location.reload();
 
     }
-
-    drawBoards();
-
-}
-document
-.getElementById("startGame")
-.onclick=function(){
-
-    gameStarted=true;
-    playerTurn=true;
-
-    status.innerHTML=
-    "🚀 Бой начался! Стреляйте по полю противника.";
 
 }
