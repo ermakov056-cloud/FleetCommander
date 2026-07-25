@@ -1485,3 +1485,281 @@ function() {
 
 
 });
+/* ===== SCRIPT.JS ===== */
+/* ЧАСТЬ 7 */
+/* Финальная проверка и защита */
+
+
+/*
+Защита от двойного клика
+*/
+
+let clickLock = false;
+
+
+function lockClick() {
+
+
+    if (clickLock) {
+
+        return false;
+
+    }
+
+
+    clickLock = true;
+
+
+    setTimeout(() => {
+
+        clickLock = false;
+
+    },300);
+
+
+
+    return true;
+
+}
+
+
+
+/*
+Безопасный выстрел
+*/
+
+const oldPlayerShoot = playerShoot;
+
+
+playerShoot = function(x, y) {
+
+
+    if (!lockClick()) {
+
+        return;
+
+    }
+
+
+    oldPlayerShoot(
+        x,
+        y
+    );
+
+
+};
+
+
+
+/*
+Проверка элементов игры
+*/
+
+function checkGameHTML() {
+
+
+    let required = [
+
+        "player-board",
+
+        "enemy-board",
+
+        "game-message",
+
+        "menu-screen"
+
+    ];
+
+
+
+    let missing = [];
+
+
+
+    required.forEach(id => {
+
+
+        if (
+            !document.getElementById(id)
+        ) {
+
+            missing.push(id);
+
+        }
+
+
+    });
+
+
+
+    if (missing.length > 0) {
+
+
+        console.warn(
+            "Не найдены элементы:",
+            missing
+        );
+
+
+        return false;
+
+
+    }
+
+
+
+    return true;
+
+}
+
+
+
+/*
+Автосохранение состояния
+*/
+
+function saveCurrentGame() {
+
+
+    let data = {
+
+
+        playerBoard,
+
+        enemyBoard,
+
+        playerTurn,
+
+        playerHits,
+
+        enemyHits
+
+
+    };
+
+
+
+    localStorage.setItem(
+
+        "fleetSave",
+
+        JSON.stringify(data)
+
+    );
+
+
+}
+
+
+
+/*
+Загрузка сохранения
+*/
+
+function loadCurrentGame() {
+
+
+    let data =
+
+    JSON.parse(
+
+        localStorage.getItem(
+            "fleetSave"
+        )
+
+    );
+
+
+
+    if (!data) {
+
+        return false;
+
+    }
+
+
+
+    playerBoard =
+    data.playerBoard;
+
+
+    enemyBoard =
+    data.enemyBoard;
+
+
+    playerTurn =
+    data.playerTurn;
+
+
+    playerHits =
+    data.playerHits;
+
+
+    enemyHits =
+    data.enemyHits;
+
+
+
+    drawBoards();
+
+
+
+    return true;
+
+}
+
+
+
+/*
+Автосохранение каждые 5 секунд
+*/
+
+setInterval(
+
+    function(){
+
+        if(playerBoard.length){
+
+            saveCurrentGame();
+
+        }
+
+    },
+
+    5000
+
+);
+
+
+
+/*
+Финальный запуск
+*/
+
+window.addEventListener(
+"load",
+function(){
+
+
+    if (
+        checkGameHTML()
+    ) {
+
+
+        console.log(
+            "Fleet Commander запущен"
+        );
+
+
+    } else {
+
+
+        console.log(
+            "Проверь HTML структуру"
+        );
+
+
+    }
+
+
+});
